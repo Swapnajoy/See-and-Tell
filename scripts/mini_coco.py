@@ -31,7 +31,7 @@ for item in annotations:
         entries.append(entry)
         images_seen.add(img_id)
     
-    if len(images_seen)>300:
+    if len(images_seen)>=300:
         break
 
 os.makedirs(os.path.dirname(annotation_savepath), exist_ok=True)
