@@ -14,7 +14,7 @@ wiki = wikipediaapi.Wikipedia(
 )
 
 nouns = set()
-for item in tqdm(mini_coco, desc='Processing mini_coco'):
+for item in mini_coco:
     caption = item['caption']
 
     doc = nlp(caption)
