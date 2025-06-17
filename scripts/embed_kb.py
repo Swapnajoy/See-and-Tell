@@ -15,4 +15,7 @@ embeddings = model.encode(content, batch_size=32, show_progress_bar=True)
 index = faiss.IndexFlatL2(embeddings.shape[1])
 index.add(embeddings)
 
-print(index.ntotal)
+faiss.write_index(index, "retriever/faiss_index.bin")
+
+with open("retriever/wiki_entries_meta.json", "w") as g:
+    json.dump(entries, g, indent=2)
