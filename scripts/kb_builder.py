@@ -33,15 +33,19 @@ print("Nouns extracted. Generating Knowledge-Base")
 entries = []
 for noun in tqdm(nouns, desc='Wiki Search'):
     page = wiki.page(noun)
+    summary = page.summary.strip().lower()
 
-    if page.exists():
-        summary = page.summary.strip().lower()
-        if not summary.startswith('may refer to'):
-            entry = {
-                "title": noun,
-                "content": page.summary[:1000],
+    if (
+    page.exists()
+    and not summary.startswith("may refer to")
+    and " may refer to:" not in summary[:70]
+    and len(summary) > 70
+    ):
+        entry = {
+            "title": noun,
+            "content": page.summary[:1000],
             }
-            entries.append(entry)
+        entries.append(entry)
 
 kb_path = 'data/knowledge_base/wiki_entries.jsonl'
 os.makedirs(os.path.dirname(kb_path), exist_ok=True)
