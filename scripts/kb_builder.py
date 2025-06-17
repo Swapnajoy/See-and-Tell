@@ -1,10 +1,11 @@
 import os
+
 import json
 import spacy
 import wikipediaapi
 from tqdm import tqdm
 
-with open('data\captions\mini_coco.json', 'r', encoding='utf-8') as f:
+with open('data/captions/mini_coco.json', 'r', encoding='utf-8') as f:
     mini_coco = json.load(f)
 
 nlp = spacy.load("en_core_web_trf")
@@ -34,12 +35,13 @@ for noun in tqdm(nouns, desc='Wiki Search'):
     page = wiki.page(noun)
 
     if page.exists():
-        content = page.summary[:1000]
-        entry = {
-            "title": noun,
-            "content": content,
-        }
-        entries.append(entry)
+        summary = page.summary.strip().lower()
+        if not summary.startswith('may refer to'):
+            entry = {
+                "title": noun,
+                "content": page.summary[:1000],
+            }
+            entries.append(entry)
 
 kb_path = 'data/knowledge_base/wiki_entries.jsonl'
 os.makedirs(os.path.dirname(kb_path), exist_ok=True)
