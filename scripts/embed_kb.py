@@ -17,5 +17,3 @@ index.add(embeddings)
 
 faiss.write_index(index, "retriever/faiss_index.bin")
 
-with open("retriever/wiki_entries_meta.json", "w") as g:
-    json.dump(entries, g, indent=2)
