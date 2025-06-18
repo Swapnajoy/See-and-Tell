@@ -1,3 +1,100 @@
 /projectstr.txt
 
 /data/val2017/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+sdist/
+MANIFEST
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Virtual environments
+.env
+.env*/
+env/
+env.*/
+venv/
+venv.*/
+ENV/
+ENV.*/
+.venv
+.venv*/
+
+# Conda
+conda-meta/
+pkgs/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+# JupyterLab workspace settings
+.lab/user-settings/
+.lab/workspaces/
+
+# Environment variables
+.env
+.env.*
+
+# VSCode
+.vscode/
+
+# JetBrains IDEs
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Backup and swap files
+*~
+*.swp
+*.swo
+*.bak
+*.tmp
