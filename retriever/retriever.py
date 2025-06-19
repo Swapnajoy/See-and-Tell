@@ -27,12 +27,7 @@ class Retriever(nn.Module):
     def save(self):
         torch.save(self.project.state_dict, self.ckpt_path)
 
-    def __call__(self, image_emb):
-        with torch.no_grad():
-            projected = self.project(image_emb)
-            projected = projected.cpu().numpy().astype('float32')
-            projected = projected.reshape(1, -1)
-
-        _, I = self.index.search(image_emb, k=self.k)
-        results = [self.entries[i] for i in I[0]]
-        return results
+    def forward(self, image_emb: torch.Tensor) -> list:
+        projected = self.project(image_emb).detach().cpu().numpy().astype('float32').reshape(1, -1)
+        _, I = self.index.search(projected, self.k)
+        return [self.entries[i] for i in I[0]]

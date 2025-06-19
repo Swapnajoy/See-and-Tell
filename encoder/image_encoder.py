@@ -17,14 +17,10 @@ class ImageEncoder:
         ])
 
     def __call__(self, image) -> np.ndarray:
-        out = self.tf(image)
-        out = out.unsqueeze(0).to(self.device)
-        out = self.transformer(out)
-        cls_token_emb = out.last_hidden_state[:, 0, :]
-        cls_token_emb = cls_token_emb.detach().cpu().numpy().squeeze(0)
-        return cls_token_emb
+        out = self.tf(image).unsqueeze(0).to(self.device)
+        cls_token_emb = self.transformer(out).last_hidden_state[:, 0, :]
+        return cls_token_emb.squeeze(0)
     
     def encode_from_path(self, path) -> np.ndarray:
         image = Image.open(path).convert('RGB')
-        cls_token_emb = self.__call__(image)
-        return cls_token_emb
+        return self.__call__(image)
