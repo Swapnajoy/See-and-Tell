@@ -11,5 +11,5 @@ class FusionModule:
         assert image_vec.shape[0] == self.image_dim
         assert retrieved_vecs.shape == (self.k, self.text_dim)
 
-        retrieved_text_vecs = retrieved_text_vecs.reshape(self.k*self.text_dim)
-        return torch.cat((image_vec, retrieved_text_vecs), dim=0)
+        retrieved_vecs = retrieved_vecs.reshape(self.k*self.text_dim)
+        return torch.cat((image_vec, retrieved_vecs), dim=0)

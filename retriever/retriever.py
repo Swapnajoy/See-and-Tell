@@ -12,11 +12,12 @@ class Retriever(nn.Module):
             k=3,
             kb_path='data/knowledge_base/wiki_entries.jsonl',
             projection_ckpt_path='retriever/projection.pt',
+            device='cuda' if torch.cuda.is_available() else 'cpu'
             ):
         super().__init__()
         self.index = faiss.read_index(faiss_index_path)
         self.k = k
-        self.project = nn.Linear(768, 384)
+        self.project = nn.Linear(768, 384).to(device)
         self.embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         self.ckpt_path = projection_ckpt_path
 
