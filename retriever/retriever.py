@@ -3,6 +3,7 @@ import json
 import faiss
 import torch
 import torch.nn as nn
+from sentence_transformers import SentenceTransformer
 
 class Retriever(nn.Module):
     def __init__(
@@ -16,6 +17,7 @@ class Retriever(nn.Module):
         self.index = faiss.read_index(faiss_index_path)
         self.k = k
         self.project = nn.Linear(768, 384)
+        self.embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         self.ckpt_path = projection_ckpt_path
 
         if os.path.exists(self.ckpt_path):
@@ -27,7 +29,10 @@ class Retriever(nn.Module):
     def save(self):
         torch.save(self.project.state_dict, self.ckpt_path)
 
-    def forward(self, image_emb: torch.Tensor) -> list:
+    def forward(self, image_emb: torch.Tensor) -> torch.Tensor:
         projected = self.project(image_emb).detach().cpu().numpy().astype('float32').reshape(1, -1)
         _, I = self.index.search(projected, self.k)
-        return [self.entries[i] for i in I[0]]
+        topk_contents = [self.entries[i]['content'] for i in I[0]]
+        
+        retrieved_vecs = self.embedder.encode(topk_contents, convert_to_tensor=True)
+        return retrieved_vecs.to(image_emb.device)
