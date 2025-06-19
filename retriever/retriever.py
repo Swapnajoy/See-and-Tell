@@ -1,18 +1,20 @@
 import json
-from sentence_transformers import SentenceTransformer
 import faiss
 
-model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-index = faiss.read_index("retriever/faiss_index.bin")
+class Retriever():
+    def __init__(
+            self,
+            faiss_index_path='retriever/faiss_index.bin',
+            k=3,
+            kb_path='data/knowledge_base/wiki_entries.jsonl',
+            ):
+        self.index = faiss.read_index(faiss_index_path)
+        self.k = k
 
-with open('data/knowledge_base/wiki_entries.jsonl', 'r', encoding='utf-8') as f:
-    entries = [json.loads(line) for line in f]
+        with open(kb_path, 'r', encoding='utf-8') as f:
+            self.entries = [json.loads(line) for line in f]
 
-query = input('Enter Query: ')
-query_emb = model.encode([query])
-
-D, I = index.search(query_emb, k=3)
-results = [entries[i] for i in I[0]]
-
-for result in results:
-    print(result)
+    def __call__(self, image_emb):
+        _, I = self.index.search(image_emb, k=self.k)
+        results = [self.entries[i] for i in I[0]]
+        return results
