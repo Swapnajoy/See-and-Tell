@@ -4,9 +4,9 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 from transformers.modeling_outputs import BaseModelOutput
 
 class Decoder(nn.Module):
-    def __init__(self, input_dim, config_file='t5-base'):
+    def __init__(self, config_file='t5-base'):
         super().__init__()
-        self.projection = nn.Linear(input_dim, 768)
+        self.projection = nn.Linear(1920, 768)
         self.tokenizer = T5Tokenizer.from_pretrained(config_file)
         self.decoder = T5ForConditionalGeneration.from_pretrained(config_file)
 
