@@ -5,10 +5,8 @@ import numpy as np
 
 from transformers import ViTModel
 
-device = ('cuda' if torch.cuda.is_available() else 'cpu')
-
 class ImageEncoder:
-    def __init__(self, model_name="google/vit-base-patch16-224-in21k", transforms=transforms, device=device):
+    def __init__(self, model_name="google/vit-base-patch16-224-in21k", device='cuda' if torch.cuda.is_available() else 'cpu'):
         super().__init__()
         self.device = device
         self.transformer = ViTModel.from_pretrained(model_name).to(device).eval()
