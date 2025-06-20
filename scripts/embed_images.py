@@ -17,16 +17,14 @@ device = model.device
 
 files = os.listdir(image_folder)
 
-entries = []
-for file_name in tqdm(files, desc='Processing Images'):
-    if file_name.endswith('.jpg'):
-        file_path = os.path.join(image_folder, file_name)
-        entry = {
-            'image_id': file_name,
-            'embedding': model.encode_from_path(file_path)
-        }
-        entries.append(entry)
-
 with open('data/image_embeddings/image_embeddings.jsonl', 'w', encoding='utf-8') as f:
-    for entry in entries:
-        f.write(json.dumps(entry) + '\n')
+    for file_name in tqdm(files, desc='Processing Images'):
+        if file_name.endswith('.jpg'):
+            file_path = os.path.join(image_folder, file_name)
+            entry = {
+                'image_id': file_name,
+                'embedding': model.encode_from_path(file_path).tolist()
+            }
+            f.write(json.dumps(entry) + '\n')
+
+
