@@ -1,0 +1,32 @@
+├── README.md
+├── data
+│   ├── captions
+│   │   └── mini_coco.json
+│   ├── image_embeddings
+│   │   └── image_embeddings.jsonl
+│   ├── images
+│   ├── knowledge_base
+│   │   └── wiki_entries.jsonl
+│   └── original_val2017_img_and_captions
+│       ├── captions_val2017.json
+│       └── val2017
+├── encoder
+│   ├── __init__.py
+│   └── image_encoder.py
+├── generate.py
+├── generator
+│   ├── __init__.py
+│   ├── decoder.py
+│   └── fusion_module.py
+├── projectstr.txt
+├── retriever
+│   ├── __init__.py
+│   ├── faiss_index.bin
+│   └── retriever.py
+├── scripts
+│   ├── embed_images.py
+│   ├── embed_kb.py
+│   ├── kb_builder.py
+│   └── mini_coco.py
+├── tree.txt
+└── tree_gen.py
