@@ -1,4 +1,8 @@
+
 import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import json
 import spacy
@@ -21,12 +25,9 @@ for item in mini_coco:
     doc = nlp(caption)
     for np in doc.noun_chunks:
         nouns.add(np.text.split()[-1].lower().strip())
-        if len(nouns) == 200:
-            break
 
-    if len(nouns) == 200:
-            break
-    
+print(f'Number of nouns found: {len(nouns)}')
+
 print("Nouns extracted. Generating Knowledge-Base")
 
 
