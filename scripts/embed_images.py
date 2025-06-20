@@ -17,6 +17,8 @@ device = model.device
 
 files = os.listdir(image_folder)
 
+os.makedirs('data/image_embeddings', exist_ok=True)
+
 with open('data/image_embeddings/image_embeddings.jsonl', 'w', encoding='utf-8') as f:
     for file_name in tqdm(files, desc='Processing Images'):
         if file_name.endswith('.jpg'):
