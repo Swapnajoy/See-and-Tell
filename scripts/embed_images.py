@@ -27,6 +27,6 @@ for file_name in tqdm(files, desc='Processing Images'):
         }
         entries.append(entry)
 
-with open('data/image_embeddings.jsonl', 'w', encoding='utf-8') as f:
+with open('data/image_embeddings/image_embeddings.jsonl', 'w', encoding='utf-8') as f:
     for entry in entries:
         f.write(json.dumps(entry) + '\n')
