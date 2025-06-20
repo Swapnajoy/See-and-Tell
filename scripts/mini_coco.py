@@ -5,7 +5,7 @@ import random
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-with open('data/captions_val2017.json', 'r', encoding='utf-8') as f:
+with open('data/original_val2017_img_and_captions/captions_val2017.json', 'r', encoding='utf-8') as f:
     coco = json.load(f)
 
 annotations = coco['annotations']
@@ -25,7 +25,6 @@ for item in annotations:
         entry = {
             'image_id': f"{img_id:012d}",
             'caption': f"{caption}",
-            'objects': [],
         }
 
         entries.append(entry)
@@ -43,7 +42,7 @@ print(f"{annotation_savepath} created with 300 captions")
 
 import shutil
 
-images_loadpath = 'data/val2017'
+images_loadpath = 'data/original_val2017_img_and_captions/val2017'
 images_savepath = 'data/images'
 os.makedirs(images_savepath, exist_ok=True)
 
