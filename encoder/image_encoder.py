@@ -16,11 +16,11 @@ class ImageEncoder:
                 transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
         ])
 
-    def __call__(self, image) -> np.ndarray:
+    def __call__(self, image) -> torch.Tensor:
         out = self.tf(image).unsqueeze(0).to(self.device)
         cls_token_emb = self.transformer(out).last_hidden_state[:, 0, :]
         return cls_token_emb.squeeze(0)
     
-    def encode_from_path(self, path) -> np.ndarray:
+    def encode_from_path(self, path) -> torch.Tensor:
         image = Image.open(path).convert('RGB')
         return self.__call__(image)
