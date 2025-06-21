@@ -17,9 +17,15 @@ class Retriever(nn.Module):
         super().__init__()
         self.index = faiss.read_index(faiss_index_path)
         self.k = k
-        self.project = nn.Linear(768, 384).to(device)
+        self.project = nn.Sequential(
+            nn.Linear(1536, 768),
+            nn.ReLU(inplace=True),
+            nn.Linear(768, 384)
+        ).to(device)
+            
         self.embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         self.ckpt_path = projection_ckpt_path
+        self.device = device
 
         if os.path.exists(self.ckpt_path):
             self.project.load_state_dict(torch.load(self.ckpt_path))
@@ -28,12 +34,17 @@ class Retriever(nn.Module):
             self.entries = [json.loads(line) for line in f]
 
     def save(self):
-        torch.save(self.project.state_dict, self.ckpt_path)
-
-    def forward(self, image_emb: torch.Tensor) -> torch.Tensor:
-        projected = self.project(image_emb).detach().cpu().numpy().astype('float32').reshape(1, -1)
+        torch.save(self.project.state_dict(), self.ckpt_path)
+    
+    def get_topk_contents(self, joint_emb: torch.Tensor) -> list[str]:
+        projected = self.project(joint_emb).detach().cpu().numpy().astype('float32').reshape(1, -1)
         _, I = self.index.search(projected, self.k)
-        topk_contents = [self.entries[i]['content'] for i in I[0]]
+        return [self.entries[i]['content'] for i in I[0]]
+
+    def retrieve(self, text_emb: torch.Tensor, image_emb: torch.Tensor) -> torch.Tensor:
+        joint_emb = torch.cat([text_emb, image_emb], dim=-1)
+        topk_contents = self.get_topk_contents(joint_emb)
         
         retrieved_vecs = self.embedder.encode(topk_contents, convert_to_tensor=True)
-        return retrieved_vecs.to(image_emb.device)
+        return retrieved_vecs.to(self.device)
+    
