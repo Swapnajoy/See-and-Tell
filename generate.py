@@ -4,8 +4,8 @@ import torch.nn as nn
 
 from encoder.image_encoder import ImageEncoder
 from retriever.retriever import Retriever
-from generator.fusion_module import FusionModule
-from generator.decoder import Decoder
+from decoder.fusion_module import FusionModule
+from decoder.decoder import Decoder
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 

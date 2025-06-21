@@ -7,18 +7,23 @@
 │   ├── images
 │   ├── knowledge_base
 │   │   └── wiki_entries.jsonl
-│   └── original_val2017_img_and_captions
-│       ├── captions_val2017.json
-│       └── val2017
-├── encoder
-│   ├── __init__.py
-│   └── image_encoder.py
-├── generate.py
-├── generator
+│   ├── original_val2017_img_and_captions
+│   │   ├── captions_val2017.json
+│   │   └── val2017
+│   └── triplets
+│       ├── triplets.jsonl
+│       └── triplets_preview.json
+├── datasets
+│   └── triplet_dataset.py
+├── decoder
 │   ├── __init__.py
 │   ├── decoder.py
 │   └── fusion_module.py
-├── projectstr.txt
+├── encoder
+│   ├── __init__.py
+│   ├── image_encoder.py
+│   └── text_encoder.py
+├── generate.py
 ├── retriever
 │   ├── __init__.py
 │   ├── faiss_index.bin
@@ -27,6 +32,7 @@
 │   ├── embed_images.py
 │   ├── embed_kb.py
 │   ├── kb_builder.py
-│   └── mini_coco.py
+│   ├── mini_coco.py
+│   └── triplet_builder.py
 ├── tree.txt
 └── tree_gen.py
