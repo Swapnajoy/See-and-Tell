@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import spacy
+import re
 import random
 from tqdm import tqdm
 
@@ -45,7 +46,10 @@ for item in tqdm(mini_coco, desc='Preparing triplets'):
     
     for noun in nouns:
         if noun in wiki_entries.keys():
-            augmented_caption += ' ' + wiki_entries[noun]
+            content = wiki_entries[noun]
+            sentences = re.split(r'(?<=[.!?]) +', content)
+            limited_content = ' '.join(sentences[:2])
+            augmented_caption += ' ' + limited_content
 
     image_path = os.path.join('data/images', image_id)
 
