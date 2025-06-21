@@ -15,11 +15,30 @@ class Decoder(nn.Module):
         self.tokenizer = T5Tokenizer.from_pretrained(config_file)
         self.decoder = T5ForConditionalGeneration.from_pretrained(config_file).to(device)
 
-    def forward(self, encoder_outputs: torch.Tensor) -> str:
+    def forward(
+            self,
+            encoder_outputs: torch.Tensor,
+            mode: str = "inference",
+            target_ids: torch.Tensor = None,
+            target_mask: torch.Tensor = None
+        ):
 
-        input_ids = torch.tensor([[self.tokenizer.pad_token_id]]).to(self.device)
-    
-        encoder_outputs = self.projection(encoder_outputs).unsqueeze(0).unsqueeze(1)
+        if mode == 'inference':
+            input_ids = torch.tensor([[self.tokenizer.pad_token_id]]).to(self.device)
+        
+            encoder_outputs = self.projection(encoder_outputs).unsqueeze(0).unsqueeze(1)
 
-        output_ids = self.decoder.generate(input_ids=input_ids, encoder_outputs=BaseModelOutput(last_hidden_state=encoder_outputs))
-        return self.tokenizer.decode(output_ids[0], skip_special_tokens=True)
+            output_ids = self.decoder.generate(input_ids=input_ids, encoder_outputs=BaseModelOutput(last_hidden_state=encoder_outputs))
+            return self.tokenizer.decode(output_ids[0], skip_special_tokens=True)
+        
+        else:
+            assert target_ids is not None
+            
+            encoder_outputs = self.projection(encoder_outputs).unsqueeze(0).unsqueeze(1)
+            output = self.decoder(
+                input_ids=target_ids,
+                attention_mask=target_mask,
+                encoder_outputs=BaseModelOutput(last_hidden_state=encoder_outputs),
+                labels=target_ids
+            )
+            return output.loss
