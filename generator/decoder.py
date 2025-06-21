@@ -7,17 +7,19 @@ class Decoder(nn.Module):
     def __init__(self, config_file='t5-base', device='cuda' if torch.cuda.is_available() else 'cpu'):
         super().__init__()
         self.device = device
-        self.projection = nn.Linear(1920, 768).to(device)
+        self.projection = nn.Sequential(
+            nn.Linear(2688, 1536),
+            nn.ReLU(inplace=True),
+            nn.Linear(1536, 768),
+        ).to(device)
         self.tokenizer = T5Tokenizer.from_pretrained(config_file)
         self.decoder = T5ForConditionalGeneration.from_pretrained(config_file).to(device)
 
-    def forward(self, describe_this: str, encoder_outputs: torch.Tensor) -> str:
+    def forward(self, encoder_outputs: torch.Tensor) -> str:
 
-        input_ids = self.tokenizer(describe_this, return_tensors='pt').input_ids.to(self.device)
-        
-        seq_len = 10
-        encoder_outputs = self.projection(encoder_outputs).unsqueeze(0).repeat(seq_len, 1)
-        encoder_outputs = encoder_outputs.unsqueeze(0)
+        input_ids = torch.tensor([[self.tokenizer.pad_token_id]]).to(self.device)
+    
+        encoder_outputs = self.projection(encoder_outputs).unsqueeze(0).unsqueeze(1)
 
         output_ids = self.decoder.generate(input_ids=input_ids, encoder_outputs=BaseModelOutput(last_hidden_state=encoder_outputs))
         return self.tokenizer.decode(output_ids[0], skip_special_tokens=True)

@@ -1,7 +1,7 @@
 import torch
 
 class FusionModule:
-    def __init__(self, query_dim=768, ret_text_dim=384, k=3):
+    def __init__(self, query_dim=1536, ret_text_dim=384, k=3):
         self.query_dim = query_dim
         self.ret_text_dim = ret_text_dim
         self.k = k
