@@ -4,6 +4,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import torch
+import torch.nn as nn
 
 from encoder.image_encoder import ImageEncoder
 from encoder.text_encoder import TextEncoder
@@ -11,17 +12,19 @@ from retriever.retriever import Retriever
 from decoder.fusion_module import FusionModule
 from decoder.decoder import Decoder
 
-class VLMRAG:
+class VLMRAG(nn.Module):
     def __init__(self, mode='inference'):
-
-        self.mode = mode
+        super().__init__()
         assert self.mode in {'train', 'inference'}, f"Invalid mode: {self.mode}"
-
+        self.mode = mode
         self.img_enc = ImageEncoder()
         self.text_enc = TextEncoder()
         self.retriever = Retriever()
         self.fusion = FusionModule()
         self.decoder = Decoder()
+
+        for param in self.parameters():
+            param.requires_grad = False
 
     def __call__(self, image_path, query, target_ids: torch.Tensor = None, target_mask: torch.Tensor = None):
         img_embed = self.img_enc(image_path)
@@ -35,3 +38,11 @@ class VLMRAG:
         output = self.decoder(fused_vec, self.mode, target_ids, target_mask)
 
         return output
+    
+    def unfreeze_projection_params(self):
+
+        for param in self.retriever.project.parameters():
+            param.requires_grad = True
+
+        for param in self.decoder.projection.parameters():
+            param.requires_grad = True
