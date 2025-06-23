@@ -25,7 +25,6 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 model = VLMRAG(mode='train').to(device)
-model.unfreeze_projection_params
 
 steps_per_batch = len(train_loader)
 max_steps = epochs*steps_per_batch
