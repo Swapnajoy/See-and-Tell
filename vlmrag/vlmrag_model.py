@@ -15,8 +15,8 @@ from decoder.decoder import Decoder
 class VLMRAG(nn.Module):
     def __init__(self, mode='inference'):
         super().__init__()
-        assert self.mode in {'train', 'inference'}, f"Invalid mode: {self.mode}"
         self.mode = mode
+        assert self.mode in {'train', 'inference'}, f"Invalid mode: {self.mode}"
         self.img_enc = ImageEncoder()
         self.text_enc = TextEncoder()
         self.retriever = Retriever()
@@ -25,6 +25,9 @@ class VLMRAG(nn.Module):
 
         for param in self.parameters():
             param.requires_grad = False
+
+        if self.mode == 'train':
+            self.unfreeze_projection_params()
 
     def __call__(self, image_path, query, target_ids: torch.Tensor = None, target_mask: torch.Tensor = None):
         img_embed = self.img_enc(image_path)
