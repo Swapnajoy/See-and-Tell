@@ -29,7 +29,7 @@ class VLMRAG(nn.Module):
         if self.mode == 'train':
             self.unfreeze_projection_params()
 
-    def __call__(self, image_path, query, target_ids: torch.Tensor = None, target_mask: torch.Tensor = None):
+    def forward(self, image_path, query, target_ids: torch.Tensor = None, target_mask: torch.Tensor = None):
         img_embed = self.img_enc(image_path)
         text_embed = self.text_enc(query)
         retrieved_vecs = self.retriever.retrieve(text_embed, img_embed)
