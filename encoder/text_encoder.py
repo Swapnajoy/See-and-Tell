@@ -9,9 +9,9 @@ class TextEncoder:
         self.encoder = T5EncoderModel.from_pretrained(config_file).to(device).eval()
         self.max_len = max_len
 
-    def __call__(self, text) -> torch.Tensor:
+    def __call__(self, text_list) -> torch.Tensor:
         encoding = self.tokenizer(
-            text,
+            text_list,
             max_length=self.max_len,
             padding='max_length',
             truncation=True,
@@ -28,4 +28,9 @@ class TextEncoder:
         masked_output = output.last_hidden_state * mask
         pooled = masked_output.sum(dim=1) / mask.sum(dim=1)
 
-        return pooled.squeeze(0)
+        return pooled
+    
+if __name__ == '__main__':
+    model = TextEncoder()
+    text_list = ['Describe this image.', 'What can be seen in this image?', 'Explain what is happening here.']
+    print(model(text_list).shape)
