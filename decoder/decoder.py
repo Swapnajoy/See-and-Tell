@@ -26,7 +26,7 @@ class Decoder(nn.Module):
         if mode == 'inference':
             input_ids = torch.tensor([[self.tokenizer.pad_token_id]]).to(self.device)
         
-            encoder_outputs = self.projection(encoder_outputs).unsqueeze(0).unsqueeze(1)
+            encoder_outputs = self.projection(encoder_outputs).unsqueeze(1)
 
             output_ids = self.decoder.generate(input_ids=input_ids, encoder_outputs=BaseModelOutput(last_hidden_state=encoder_outputs))
             return self.tokenizer.decode(output_ids[0], skip_special_tokens=True)
@@ -34,7 +34,7 @@ class Decoder(nn.Module):
         else:
             assert target_ids is not None
             
-            encoder_outputs = self.projection(encoder_outputs).unsqueeze(0).unsqueeze(1)
+            encoder_outputs = self.projection(encoder_outputs).unsqueeze(1)
             output = self.decoder(
                 input_ids=target_ids,
                 attention_mask=target_mask,
