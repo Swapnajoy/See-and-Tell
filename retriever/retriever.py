@@ -3,6 +3,7 @@ import json
 import faiss
 import torch
 import torch.nn as nn
+import numpy as np
 from sentence_transformers import SentenceTransformer
 
 class Retriever(nn.Module):
@@ -37,14 +38,20 @@ class Retriever(nn.Module):
         torch.save(self.project.state_dict(), self.ckpt_path)
     
     def get_topk_contents(self, joint_emb: torch.Tensor) -> list[str]:
-        projected = self.project(joint_emb).detach().cpu().numpy().astype('float32').reshape(1, -1)
+        projected = self.project(joint_emb).detach().cpu().numpy().astype('float32')
         _, I = self.index.search(projected, self.k)
-        return [self.entries[i]['content'] for i in I[0]]
+        return [[self.entries[i]['content'] for i in row] for row in I]
 
     def retrieve(self, text_emb: torch.Tensor, image_emb: torch.Tensor) -> torch.Tensor:
         joint_emb = torch.cat([text_emb, image_emb], dim=-1)
-        topk_contents = self.get_topk_contents(joint_emb)
-        
-        retrieved_vecs = self.embedder.encode(topk_contents, convert_to_tensor=True)
+        topk_contents = np.array(self.get_topk_contents(joint_emb))
+        flat_contents = topk_contents.flatten().tolist()
+        flat_vecs = self.embedder.encode(flat_contents, convert_to_tensor=True)
+        retrieved_vecs = flat_vecs.view(joint_emb.size(0), self.k, -1).to(self.device) 
         return retrieved_vecs.to(self.device)
     
+if __name__ == '__main__':
+    model = Retriever()
+    text_emb = torch.ones((8, 768)).to('cuda')
+    image_emb = torch.ones((8, 768)).to('cuda')
+    print(model.retrieve(text_emb, image_emb).shape)
