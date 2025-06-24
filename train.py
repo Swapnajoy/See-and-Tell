@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, random_split
 from vlmrag.vlmrag_model import VLMRAG
 
 learning_rate = 0.005
-batch_size = 1
+batch_size = 16
 epochs = 30
 log_freq = 2
 
@@ -39,8 +39,8 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_ma
 for epoch in range(epochs):
     running_loss = 0
     for item in tqdm(train_loader, desc=f'Epoch {epoch}: '):
-        image_path = item['image_path'][0]
-        query = item['query'][0]
+        image_path = item['image_path']
+        query = item['query']
         target_ids = item['target_ids'].to(device)
         target_mask = item['target_mask'].to(device)
 
@@ -54,6 +54,6 @@ for epoch in range(epochs):
 
         running_loss += loss.item()
     
-    print(f"Epoch {epoch}, Average Loss: {running_loss/steps_per_batch:.4f}")
+    print(f"Epoch {epoch}: Average Loss: {running_loss/steps_per_batch:.4f}")
 
 print("Training Completed.")
