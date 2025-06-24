@@ -6,10 +6,10 @@ from datasets.triplet_dataset import TripletDataset
 from torch.utils.data import DataLoader, random_split
 from vlmrag.vlmrag_model import VLMRAG
 
-learning_rate = 0.005
-batch_size = 16
-epochs = 30
-log_freq = 2
+learning_rate = 0.0003
+batch_size = 32
+epochs = 50
+log_and_eval_freq = epochs//epochs
 
 dataset = TripletDataset()
 
@@ -32,13 +32,14 @@ max_steps = epochs*steps_per_batch
 optimizer = torch.optim.AdamW(
     list(model.retriever.project.parameters()) + list(model.decoder.projection.parameters()),
     lr=learning_rate,
-    weight_decay=1e-6
+    weight_decay=1e-4
 )
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=max_steps)
 
 for epoch in range(epochs):
+    model.train()
     running_loss = 0
-    for item in tqdm(train_loader, desc=f'Epoch {epoch}: '):
+    for item in tqdm(train_loader, desc=f'{epoch+1}'):
         image_path = item['image_path']
         query = item['query']
         target_ids = item['target_ids'].to(device)
@@ -54,6 +55,23 @@ for epoch in range(epochs):
 
         running_loss += loss.item()
     
-    print(f"Epoch {epoch}: Average Loss: {running_loss/steps_per_batch:.4f}")
+    training_loss = running_loss/steps_per_batch
+
+    if (epoch+1)%log_and_eval_freq == 0:
+        model.eval()
+        with torch.no_grad():
+            running_loss = 0
+            for item in test_loader:
+                image_path = item['image_path']
+                query = item['query']
+                target_ids = item['target_ids'].to(device)
+                target_mask = item['target_mask'].to(device)
+
+                loss = model(image_path, query, target_ids, target_mask)
+                running_loss += loss.item()
+
+            validation_loss = running_loss/steps_per_batch
+        
+        print(f"Epoch {epoch+1}: Training Loss: {training_loss:.4f} Validation Loss: {validation_loss:.4f}")
 
 print("Training Completed.")
