@@ -15,8 +15,16 @@ class ImageEncoder:
                 transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
         ])
 
-    def __call__(self, image_path) -> torch.Tensor:
-        image = Image.open(image_path).convert('RGB')
-        out = self.tf(image).unsqueeze(0).to(self.device)
-        cls_token_emb = self.transformer(out).last_hidden_state[:, 0, :]
-        return cls_token_emb.squeeze(0)
+    def __call__(self, image_path_list) -> torch.Tensor:
+        images = []
+        for image_path in image_path_list:
+            image = Image.open(image_path).convert('RGB')
+            images.append(self.tf(image))
+        batch = torch.stack(images).to(self.device)
+        cls_token_emb = self.transformer(batch).last_hidden_state[:, 0, :]
+        return cls_token_emb
+    
+if __name__ == '__main__':
+    model = ImageEncoder()
+    image_path_list = ['data/images/000000000139.jpg', 'data/images/000000005529.jpg', 'data/images/000000010764.jpg']
+    print(model(image_path_list).shape)
