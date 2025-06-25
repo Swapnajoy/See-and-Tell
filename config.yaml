@@ -2,14 +2,12 @@
 batch_size: 8
 lr: 0.0003
 epochs: 50
+train_test_split: 0.9
 weight_decay: 0.01
 
 # === Evaluation and Logging ===
 eval_frequency: 1     # Evaluate every N epochs
 log_frequency: 10     # Log every N batches
-
-# === Retrieval Settings ===
-retrieval_top_k: 3    # Number of top documents to retrieve
 
 # === Runtime Environment ===
 device: cuda          # Set to 'cuda' or 'cpu'
