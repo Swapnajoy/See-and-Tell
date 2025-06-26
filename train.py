@@ -108,5 +108,9 @@ for epoch in range(epochs):
         with open(log_path, 'a', encoding='utf-8') as f:
             f.write(log_line)
         
-        torch.save(model.state_dict(), ckpt_path)
+        torch.save({
+            'retriever_proj': model.retriever.project.state_dict(),
+            'decoder_proj': model.decoder.projection.state_dict(),
+        })
+
 print("Training Completed.")
