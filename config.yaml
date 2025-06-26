@@ -1,17 +1,17 @@
 # === Training Hyperparameters ===
 batch_size: 8
-lr: 0.0003
-epochs: 10
+lr: 0.00005
+epochs: 20
 train_test_split: 0.9
 weight_decay: 0.001
 
 # === Evaluation and Logging ===
 eval_frequency: 1     # Evaluate every N epochs
-log_frequency: 10     # Log every N batches
+log_frequency: 1     # Log every N batches
 
 # === Runtime Environment ===
 device: cuda          # Set to 'cuda' or 'cpu'
 random_seed: 42
 
 # === Generate ===
-ckpt_path: 'train_exp/run_epoch10_lr0.0003_bs8_time20250625-204048/epoch_10.pt'
+ckpt_path: 'train_exp/run_epoch20_lr5e-05_bs8_time20250626-123912/epoch_3.pt'

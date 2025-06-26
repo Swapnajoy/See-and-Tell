@@ -7,8 +7,8 @@ from utils.config import load_config
 
 cfg = load_config()
 
-image_path = ['data/images/000000032285.jpg']
-text_query = ['Explain this image.']
+image_path = ['data/images/000000044652.jpg']
+text_query = ['Describe the image.']
 
 device = cfg['device']
 ckpt_path = cfg['ckpt_path']
@@ -22,4 +22,4 @@ model.to(device)
 
 output = model(image_path, text_query)
 
-print(output)
+print(f"Description: {output}")

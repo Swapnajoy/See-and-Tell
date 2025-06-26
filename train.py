@@ -86,7 +86,7 @@ for epoch in range(epochs):
         validation_loss = None
         with torch.no_grad():
             running_loss = 0
-            for item in tqdm(test_loader, desc=f"Eval {epoch+1}"):
+            for item in test_loader:
                 image_path = item['image_path']
                 query = item['query']
                 target_ids = item['target_ids'].to(device)
@@ -103,11 +103,11 @@ for epoch in range(epochs):
         ckpt_path = os.path.join(exp_path, f'epoch_{epoch+1}.pt')
 
         with open(log_path, 'a', encoding='utf-8') as f:
-            f.write(log_line)
+            f.write(log_line + '\n')
         
         torch.save({
             'retriever_proj': model.retriever.project.state_dict(),
             'decoder_proj': model.decoder.projection.state_dict(),
-        })
+        }, ckpt_path)
 
 print("Training Completed.")
