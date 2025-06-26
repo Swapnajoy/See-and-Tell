@@ -8,12 +8,9 @@ from datasets.triplet_dataset import TripletDataset
 from torch.utils.data import DataLoader, random_split
 from vlmrag.vlmrag_model import VLMRAG
 from utils.config import load_config
+from datetime import datetime
 
 cfg = load_config()
-
-from datetime import datetime
-import os
-import yaml
 
 def create_exp_folder(config, base_dir="train_exp"):
     dt_string = datetime.now().strftime("%Y%m%d-%H%M%S")

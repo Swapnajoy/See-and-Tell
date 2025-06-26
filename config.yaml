@@ -15,7 +15,3 @@ random_seed: 42
 
 # === Generate ===
 ckpt_path: 'train_exp/run_epoch10_lr0.0003_bs8_time20250625-204048/epoch_10.pt'
-input_image_path: 'data/images/000000046872.jpg'
-max_generate: 128
-decoder_temperature: 1.0
-top_k: 50
