@@ -20,7 +20,11 @@ class Decoder(nn.Module):
             encoder_outputs: torch.Tensor,
             mode: str = "inference",
             target_ids: torch.Tensor = None,
-            target_mask: torch.Tensor = None
+            target_mask: torch.Tensor = None,
+            max_new_tokens = 128,
+            temperature = 1.0,
+            top_k = 50,
+            do_sample = True,
         ):
 
         if mode == 'inference':
@@ -28,7 +32,15 @@ class Decoder(nn.Module):
         
             encoder_outputs = self.projection(encoder_outputs).unsqueeze(1)
 
-            output_ids = self.decoder.generate(input_ids=input_ids, encoder_outputs=BaseModelOutput(last_hidden_state=encoder_outputs))
+            output_ids = self.decoder.generate(
+                input_ids=input_ids,
+                encoder_outputs=BaseModelOutput(last_hidden_state=encoder_outputs),
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+                top_k=top_k,
+                do_sample=do_sample
+            )
+            
             return self.tokenizer.decode(output_ids[0], skip_special_tokens=True)
         
         else:
