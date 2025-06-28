@@ -19,9 +19,11 @@ class Retriever(nn.Module):
         self.index = faiss.read_index(faiss_index_path)
         self.k = k
         self.project = nn.Sequential(
-            nn.Linear(1536, 768),
+            nn.Linear(1536, 1024),
             nn.ReLU(inplace=True),
-            nn.Linear(768, 384)
+            nn.Linear(1024, 512),
+            nn.ReLU(inplace=True),
+            nn.Linear(512, 384),
         ).to(device)
             
         self.embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
@@ -38,13 +40,25 @@ class Retriever(nn.Module):
         torch.save(self.project.state_dict(), self.ckpt_path)
     
     def get_topk_contents(self, joint_emb: torch.Tensor) -> list[str]:
-        projected = self.project(joint_emb).detach().cpu().numpy().astype('float32')
-        _, I = self.index.search(projected, self.k)
+        projected = self.project(joint_emb)
+        projected = torch.nn.functional.normalize(projected, p=2, dim=1)
+        projected = projected.detach().cpu().numpy().astype('float32')
+        
+        print(f'projected_shape: {projected.shape}')
+        print(f'projected_norm: {np.linalg.norm(x=projected, axis=1)}')
+
+        D, I = self.index.search(projected, self.k)
+        print(f'Distances: {D}')
+        print("Embed retrievals:")
+        for idx in I[0]:
+            print("-", self.entries[idx]['title'])
+
         return [[self.entries[i]['content'] for i in row] for row in I]
 
     def retrieve(self, text_emb: torch.Tensor, image_emb: torch.Tensor) -> torch.Tensor:
         joint_emb = torch.cat([text_emb, image_emb], dim=-1)
         topk_contents = np.array(self.get_topk_contents(joint_emb))
+
         flat_contents = topk_contents.flatten().tolist()
         flat_vecs = self.embedder.encode(flat_contents, convert_to_tensor=True)
         retrieved_vecs = flat_vecs.view(joint_emb.size(0), self.k, -1).to(self.device) 
