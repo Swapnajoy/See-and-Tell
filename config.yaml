@@ -6,8 +6,8 @@ train_test_split: 0.9
 weight_decay: 0.001
 
 # === Evaluation and Logging ===
-eval_frequency: 1   # Evaluate every N epochs
-log_frequency: 1     # Log every N batches
+eval_frequency: 1
+log_frequency: 1
 
 # === Runtime Environment ===
 device: cuda          # Set to 'cuda' or 'cpu'
