@@ -1,7 +1,7 @@
 # === Training Hyperparameters ===
-batch_size: 8
-lr: 3e-4
-epochs: 50
+batch_size: 16
+lr: 0.0005
+epochs: 100
 train_test_split: 0.9
 weight_decay: 0.001
 
@@ -14,4 +14,4 @@ device: cuda          # Set to 'cuda' or 'cpu'
 random_seed: 42
 
 # === Generate ===
-ckpt_path: 'train_exp/run_epoch20_lr5e-05_bs8_time20250626-123912/epoch_3.pt'
+ckpt_path: 'train_exp/run_epoch50_lr0.0005_bs8_time20250628-134926/epoch_50.pt'
