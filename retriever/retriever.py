@@ -41,28 +41,27 @@ class Retriever(nn.Module):
     
     def get_topk_contents(self, joint_emb: torch.Tensor) -> list[str]:
         projected = self.project(joint_emb)
+        #print(f'projected_norm: {projected.norm(dim=1)}')
         projected = torch.nn.functional.normalize(projected, p=2, dim=1)
         projected = projected.detach().cpu().numpy().astype('float32')
-        
-        print(f'projected_shape: {projected.shape}')
-        print(f'projected_norm: {np.linalg.norm(x=projected, axis=1)}')
 
         D, I = self.index.search(projected, self.k)
-        print(f'Distances: {D}')
-        print("Embed retrievals:")
+        #print(f'Distances: {D}')
+        #print("Embed retrievals:")
         for idx in I[0]:
             print("-", self.entries[idx]['title'])
 
-        return [[self.entries[i]['content'] for i in row] for row in I]
+        return [[self.entries[i]['content'] for i in row] for row in I], D
 
     def retrieve(self, text_emb: torch.Tensor, image_emb: torch.Tensor) -> torch.Tensor:
         joint_emb = torch.cat([text_emb, image_emb], dim=-1)
-        topk_contents = np.array(self.get_topk_contents(joint_emb))
+        topk_contents, distances = self.get_topk_contents(joint_emb)
+        topk_contents = np.array(topk_contents)
 
         flat_contents = topk_contents.flatten().tolist()
         flat_vecs = self.embedder.encode(flat_contents, convert_to_tensor=True)
         retrieved_vecs = flat_vecs.view(joint_emb.size(0), self.k, -1).to(self.device) 
-        return retrieved_vecs.to(self.device)
+        return retrieved_vecs.to(self.device), distances
     
 if __name__ == '__main__':
     model = Retriever()
