@@ -8,7 +8,7 @@ class Decoder(nn.Module):
         super().__init__()
         self.device = device
         self.projection = nn.Sequential(
-            nn.Linear(2688, 1536),
+            nn.Linear(3072, 1536),
             nn.ReLU(inplace=True),
             nn.Linear(1536, 768),
         ).to(device)
@@ -43,6 +43,7 @@ class Decoder(nn.Module):
             assert target_ids is not None
             
             encoder_outputs = self.projection(encoder_outputs).unsqueeze(1)
+            
             output = self.decoder(
                 input_ids=target_ids,
                 attention_mask=target_mask,
