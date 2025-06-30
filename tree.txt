@@ -1,4 +1,5 @@
 ├── README.md
+├── config.yaml
 ├── data
 │   ├── captions
 │   │   └── mini_coco.json
@@ -34,5 +35,173 @@
 │   ├── kb_builder.py
 │   ├── mini_coco.py
 │   └── triplet_builder.py
+├── train.py
+├── train_exp
+│   ├── run_epoch100_lr0.0005_bs16_time20250628-142049
+│   │   ├── config.yaml
+│   │   ├── epoch_1.pt
+│   │   ├── epoch_2.pt
+│   │   ├── epoch_3.pt
+│   │   └── log.txt
+│   ├── run_epoch100_lr0.0005_bs16_time20250628-142144
+│   │   ├── config.yaml
+│   │   ├── epoch_1.pt
+│   │   ├── epoch_10.pt
+│   │   ├── epoch_100.pt
+│   │   ├── epoch_11.pt
+│   │   ├── epoch_12.pt
+│   │   ├── epoch_13.pt
+│   │   ├── epoch_14.pt
+│   │   ├── epoch_15.pt
+│   │   ├── epoch_16.pt
+│   │   ├── epoch_17.pt
+│   │   ├── epoch_18.pt
+│   │   ├── epoch_19.pt
+│   │   ├── epoch_2.pt
+│   │   ├── epoch_20.pt
+│   │   ├── epoch_21.pt
+│   │   ├── epoch_22.pt
+│   │   ├── epoch_23.pt
+│   │   ├── epoch_24.pt
+│   │   ├── epoch_25.pt
+│   │   ├── epoch_26.pt
+│   │   ├── epoch_27.pt
+│   │   ├── epoch_28.pt
+│   │   ├── epoch_29.pt
+│   │   ├── epoch_3.pt
+│   │   ├── epoch_30.pt
+│   │   ├── epoch_31.pt
+│   │   ├── epoch_32.pt
+│   │   ├── epoch_33.pt
+│   │   ├── epoch_34.pt
+│   │   ├── epoch_35.pt
+│   │   ├── epoch_36.pt
+│   │   ├── epoch_37.pt
+│   │   ├── epoch_38.pt
+│   │   ├── epoch_39.pt
+│   │   ├── epoch_4.pt
+│   │   ├── epoch_40.pt
+│   │   ├── epoch_41.pt
+│   │   ├── epoch_42.pt
+│   │   ├── epoch_43.pt
+│   │   ├── epoch_44.pt
+│   │   ├── epoch_45.pt
+│   │   ├── epoch_46.pt
+│   │   ├── epoch_47.pt
+│   │   ├── epoch_48.pt
+│   │   ├── epoch_49.pt
+│   │   ├── epoch_5.pt
+│   │   ├── epoch_50.pt
+│   │   ├── epoch_51.pt
+│   │   ├── epoch_52.pt
+│   │   ├── epoch_53.pt
+│   │   ├── epoch_54.pt
+│   │   ├── epoch_55.pt
+│   │   ├── epoch_56.pt
+│   │   ├── epoch_57.pt
+│   │   ├── epoch_58.pt
+│   │   ├── epoch_59.pt
+│   │   ├── epoch_6.pt
+│   │   ├── epoch_60.pt
+│   │   ├── epoch_61.pt
+│   │   ├── epoch_62.pt
+│   │   ├── epoch_63.pt
+│   │   ├── epoch_64.pt
+│   │   ├── epoch_65.pt
+│   │   ├── epoch_66.pt
+│   │   ├── epoch_67.pt
+│   │   ├── epoch_68.pt
+│   │   ├── epoch_69.pt
+│   │   ├── epoch_7.pt
+│   │   ├── epoch_70.pt
+│   │   ├── epoch_71.pt
+│   │   ├── epoch_72.pt
+│   │   ├── epoch_73.pt
+│   │   ├── epoch_74.pt
+│   │   ├── epoch_75.pt
+│   │   ├── epoch_76.pt
+│   │   ├── epoch_77.pt
+│   │   ├── epoch_78.pt
+│   │   ├── epoch_79.pt
+│   │   ├── epoch_8.pt
+│   │   ├── epoch_80.pt
+│   │   ├── epoch_81.pt
+│   │   ├── epoch_82.pt
+│   │   ├── epoch_83.pt
+│   │   ├── epoch_84.pt
+│   │   ├── epoch_85.pt
+│   │   ├── epoch_86.pt
+│   │   ├── epoch_87.pt
+│   │   ├── epoch_88.pt
+│   │   ├── epoch_89.pt
+│   │   ├── epoch_9.pt
+│   │   ├── epoch_90.pt
+│   │   ├── epoch_91.pt
+│   │   ├── epoch_92.pt
+│   │   ├── epoch_93.pt
+│   │   ├── epoch_94.pt
+│   │   ├── epoch_95.pt
+│   │   ├── epoch_96.pt
+│   │   ├── epoch_97.pt
+│   │   ├── epoch_98.pt
+│   │   ├── epoch_99.pt
+│   │   └── log.txt
+│   └── run_epoch50_lr0.0005_bs8_time20250628-134926
+│       ├── config.yaml
+│       ├── epoch_1.pt
+│       ├── epoch_10.pt
+│       ├── epoch_11.pt
+│       ├── epoch_12.pt
+│       ├── epoch_13.pt
+│       ├── epoch_14.pt
+│       ├── epoch_15.pt
+│       ├── epoch_16.pt
+│       ├── epoch_17.pt
+│       ├── epoch_18.pt
+│       ├── epoch_19.pt
+│       ├── epoch_2.pt
+│       ├── epoch_20.pt
+│       ├── epoch_21.pt
+│       ├── epoch_22.pt
+│       ├── epoch_23.pt
+│       ├── epoch_24.pt
+│       ├── epoch_25.pt
+│       ├── epoch_26.pt
+│       ├── epoch_27.pt
+│       ├── epoch_28.pt
+│       ├── epoch_29.pt
+│       ├── epoch_3.pt
+│       ├── epoch_30.pt
+│       ├── epoch_31.pt
+│       ├── epoch_32.pt
+│       ├── epoch_33.pt
+│       ├── epoch_34.pt
+│       ├── epoch_35.pt
+│       ├── epoch_36.pt
+│       ├── epoch_37.pt
+│       ├── epoch_38.pt
+│       ├── epoch_39.pt
+│       ├── epoch_4.pt
+│       ├── epoch_40.pt
+│       ├── epoch_41.pt
+│       ├── epoch_42.pt
+│       ├── epoch_43.pt
+│       ├── epoch_44.pt
+│       ├── epoch_45.pt
+│       ├── epoch_46.pt
+│       ├── epoch_47.pt
+│       ├── epoch_48.pt
+│       ├── epoch_49.pt
+│       ├── epoch_5.pt
+│       ├── epoch_50.pt
+│       ├── epoch_6.pt
+│       ├── epoch_7.pt
+│       ├── epoch_8.pt
+│       ├── epoch_9.pt
+│       └── log.txt
 ├── tree.txt
-└── tree_gen.py
+├── tree_gen.py
+├── utils
+│   └── config.py
+└── vlmrag
+    └── vlmrag_model.py

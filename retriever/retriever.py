@@ -58,7 +58,6 @@ class Retriever(nn.Module):
         flat_vecs.requires_grad_()
         retrieved_vecs = flat_vecs.view(joint_emb.size(0), self.k, -1).to(self.device)
 
-        print("retrived_vecs_requires_gard:", retrieved_vecs.requires_grad)
         return retrieved_vecs.to(self.device), projected
     
 if __name__ == '__main__':
@@ -66,5 +65,5 @@ if __name__ == '__main__':
     text_emb = torch.ones((8, 768)).to('cuda')
     image_emb = torch.ones((8, 768)).to('cuda')
     x, y = model.retrieve(text_emb, image_emb)
-    print(f"retrived_vecs shape: {x.shape}")
+    print(f"retrieved_vecs shape: {x.shape}")
     print(f"projected shape: {y.shape}")

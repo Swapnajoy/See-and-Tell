@@ -70,8 +70,9 @@ for epoch in range(epochs):
 
         optimizer.zero_grad()
 
-        loss, _ = model(image_path, query, target_ids, target_mask)
+        loss = model(image_path, query, target_ids, target_mask)
         loss.backward()
+        print(model.retriever.project[4].weight.grad.abs().mean())
 
         optimizer.step()
         scheduler.step()
@@ -92,12 +93,11 @@ for epoch in range(epochs):
                 target_ids = item['target_ids'].to(device)
                 target_mask = item['target_mask'].to(device)
 
-                loss, distances = model(image_path, query, target_ids, target_mask)
+                loss = model(image_path, query, target_ids, target_mask)
                 running_loss += loss.item()
 
             validation_loss = running_loss/steps_per_batch
             print(f"Epoch {epoch+1}: Validation Loss: {validation_loss:.4f}")
-            print(distances)
         
     if (epoch+1)%log_freq == 0:
         log_line = f"Epoch {epoch+1} | Training Loss: {training_loss:.4f} | Validation Loss: {validation_loss:.4f}"
