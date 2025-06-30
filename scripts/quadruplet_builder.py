@@ -25,7 +25,7 @@ with open('data/knowledge_base/wiki_entries.jsonl', 'r', encoding='utf-8') as g:
         entry = json.loads(line)
         wiki_entries[entry['title']] = entry['content']
 
-nlp = spacy.load("en_core_web_trf")
+nlp = spacy.load("en_core_web_sm")
 
 queries = [
     "What is happening in this image?",
