@@ -1,5 +1,6 @@
 /data/original_val2017_img_and_captions
 /train_exp
+problems.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
