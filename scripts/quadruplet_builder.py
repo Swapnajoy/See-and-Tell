@@ -6,7 +6,15 @@ import re
 import random
 from tqdm import tqdm
 
+import faiss
+from sentence_transformers import SentenceTransformer
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+faiss_index_path='retriever/faiss_index.bin'
+index = faiss.read_index(faiss_index_path)
+
+embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 with open('data/captions/mini_coco.json', 'r', encoding='utf-8') as f:
     mini_coco = json.load(f)
@@ -32,8 +40,8 @@ queries = [
     "Provide a description of this image."
 ]
 
-triplets = []
-for item in tqdm(mini_coco, desc='Preparing triplets'):
+quadruplets = []
+for item in tqdm(mini_coco, desc='Preparing quadruplets'):
     image_id = item['image_id'] + '.jpg'
     caption = item['caption'].strip()
     doc = nlp(caption)
@@ -53,24 +61,29 @@ for item in tqdm(mini_coco, desc='Preparing triplets'):
 
     image_path = os.path.join('data/images', image_id)
 
-    triplet = {
+    caption_embed = embedder.encode([caption])
+    caption_embed = caption_embed.astype("float32")
+    _, I = index.search(caption_embed, 3)
+
+    quadruplet = {
         'image_path': image_path,
         'query': random.choice(queries),
         'caption': augmented_caption,
+        'faiss_indices': I[0].tolist()
     }
 
-    triplets.append(triplet)
+    quadruplets.append(quadruplet)
 
-triplets_path = 'data/triplets/triplets.jsonl'
-os.makedirs(os.path.dirname(triplets_path), exist_ok=True)
+quadruplets_path = 'data/quadruplets/quadruplets.jsonl'
+os.makedirs(os.path.dirname(quadruplets_path), exist_ok=True)
 
-with open(triplets_path, 'w', encoding='utf-8') as h:
-    for triplet in triplets:
-        h.write(json.dumps(triplet) + '\n')
+with open(quadruplets_path, 'w', encoding='utf-8') as h:
+    for quadruplet in quadruplets:
+        h.write(json.dumps(quadruplet) + '\n')
 
-print(f"Triplets generated at: {triplets_path}")
+print(f"Quadruplets generated at: {quadruplets_path}")
 
-with open('data/triplets/triplets_preview.json', 'w', encoding='utf-8') as preview:
-    json.dump(triplets[:10], preview, indent=2)
+with open('data/quadruplets/quadruplets_preview.json', 'w', encoding='utf-8') as preview:
+    json.dump(quadruplets[:10], preview, indent=2)
 
-print(f"Triplets_preview generated at: 'data/triplets/triplets_preview.json'")
+print(f"Quadruplets_preview generated at: 'data/quadruplets/quadruplets_preview.json'")
