@@ -11,7 +11,8 @@ class FusionModule:
         assert retrieved_vecs.shape[1:] == (self.k, self.ret_text_dim)
 
         retrieved_vecs = retrieved_vecs.reshape(-1, self.k*self.ret_text_dim)
-        return torch.cat((query_vec, retrieved_vecs), dim=-1)
+        fused_vec = torch.cat((query_vec, retrieved_vecs), dim=-1)
+        return fused_vec
     
 if __name__ == '__main__':
     model = FusionModule()
