@@ -44,23 +44,27 @@ class Retriever(nn.Module):
         projected_normed = torch.nn.functional.normalize(projected, p=2, dim=1)
         projected_np = projected_normed.detach().cpu().numpy().astype('float32')
 
-        D, I = self.index.search(projected_np, self.k)
-        return [[self.entries[i]['content'] for i in row] for row in I], D
+        _, I = self.index.search(projected_np, self.k)
+        return [[self.entries[i]['content'] for i in row] for row in I], projected
 
     def retrieve(self, text_emb: torch.Tensor, image_emb: torch.Tensor) -> torch.Tensor:
         joint_emb = torch.cat([text_emb, image_emb], dim=-1)
-        topk_contents, distances = self.get_topk_contents(joint_emb)
+        topk_contents, projected = self.get_topk_contents(joint_emb)
 
         topk_contents = np.array(topk_contents)
         flat_contents = topk_contents.flatten().tolist()
 
         flat_vecs = self.embedder.encode(flat_contents, convert_to_tensor=True)
+        flat_vecs.requires_grad_()
         retrieved_vecs = flat_vecs.view(joint_emb.size(0), self.k, -1).to(self.device)
-        
-        return retrieved_vecs.to(self.device), distances
+
+        print("retrived_vecs_requires_gard:", retrieved_vecs.requires_grad)
+        return retrieved_vecs.to(self.device), projected
     
 if __name__ == '__main__':
     model = Retriever()
     text_emb = torch.ones((8, 768)).to('cuda')
     image_emb = torch.ones((8, 768)).to('cuda')
-    print(model.retrieve(text_emb, image_emb).shape)
+    x, y = model.retrieve(text_emb, image_emb)
+    print(f"retrived_vecs shape: {x.shape}")
+    print(f"projected shape: {y.shape}")
