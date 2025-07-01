@@ -64,8 +64,10 @@ exp_path, log_path = create_exp_folder(config=cfg)
 for epoch in range(epochs):
     model.train()
     running_loss = 0
+    decoder_loss = 0
+    retriever_loss = 0
     retr_lambda = min(max_retr_lambda, max_retr_lambda * epoch/warmup_epochs)
-    print("retr_lambda:", retr_lambda)
+
     for item in tqdm(train_loader, desc=f'{epoch+1}'):
         image_path = item['image_path']
         query = item['query']
@@ -75,22 +77,28 @@ for epoch in range(epochs):
 
         optimizer.zero_grad()
 
-        decoder_loss, retr_loss = model(image_path, query, gt_emb, target_ids, target_mask)
-        loss = decoder_loss + retr_lambda*retr_loss
+        dec_loss, retr_loss = model(image_path, query, gt_emb, target_ids, target_mask)
+        loss = dec_loss + retr_lambda*retr_loss
         loss.backward()
 
         optimizer.step()
         scheduler.step()
 
         running_loss += loss.item()
+        decoder_loss += dec_loss.item()
+        retriever_loss += retr_loss.item()
     
     training_loss = running_loss/steps_per_batch
-    print(f"Epoch {epoch+1}: Training Loss: {training_loss:.4f}")
-    print(f'decoder_loss: {decoder_loss}, retriever_loss: {retr_loss}')
+    decoder_loss = decoder_loss/steps_per_batch
+    retriever_loss = retriever_loss/steps_per_batch
+
+    print(f"Epoch {epoch+1}: Training Loss: {training_loss:.4f}, Decoder_loss: {decoder_loss:.4f}, Retriever_loss: {retriever_loss:.4f}")
 
     if (epoch+1)%eval_freq == 0:
         model.eval()
-        validation_loss = None
+        validation_loss = 0
+        decoder_loss = 0
+        retriever_loss = 0
         with torch.no_grad():
             running_loss = 0
             for item in test_loader:
@@ -100,15 +108,19 @@ for epoch in range(epochs):
                 target_mask = item['target_mask'].to(device)
                 gt_emb = item['gt_emb'].to(device)
 
-                decoder_loss, retr_loss = model(image_path, query, gt_emb, target_ids, target_mask)
-                loss = decoder_loss + retr_lambda*retr_loss
+                dec_loss, retr_loss = model(image_path, query, gt_emb, target_ids, target_mask)
+                loss = dec_loss + retr_lambda*retr_loss
                 running_loss += loss.item()
+                decoder_loss += dec_loss.item()
+                retriever_loss += retr_loss.item()
 
             validation_loss = running_loss/steps_per_batch
-            print(f"Epoch {epoch+1}: Validation Loss: {validation_loss:.4f}")
+            decoder_loss = decoder_loss/steps_per_batch
+            retriever_loss = retriever_loss/steps_per_batch
+            print(f"Epoch {epoch+1}: Validation Loss: {validation_loss:.4f}, Decoder_loss: {decoder_loss:.4f}, Retriever_loss: {retriever_loss:.4f}")
         
     if (epoch+1)%log_freq == 0:
-        log_line = f"Epoch {epoch+1} | Training Loss: {training_loss:.4f} | Validation Loss: {validation_loss:.4f}"
+        log_line = f"Epoch {epoch+1} | Training Loss: {training_loss:.4f} | Validation Loss: {validation_loss:.4f} | Decoder_loss: {decoder_loss:.4f} | Retriever_loss: {retriever_loss:.4f}"
         ckpt_path = os.path.join(exp_path, f'epoch_{epoch+1}.pt')
 
         with open(log_path, 'a', encoding='utf-8') as f:
