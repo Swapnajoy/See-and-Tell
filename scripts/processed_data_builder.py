@@ -40,7 +40,7 @@ queries = [
     "Provide a description of this image."
 ]
 
-quadruplets = []
+entries = []
 for item in tqdm(mini_coco, desc='Preparing quadruplets'):
     image_id = item['image_id'] + '.jpg'
     caption = item['caption'].strip()
@@ -65,25 +65,25 @@ for item in tqdm(mini_coco, desc='Preparing quadruplets'):
     caption_embed = caption_embed.astype("float32")
     _, I = index.search(caption_embed, 3)
 
-    quadruplet = {
+    entry = {
         'image_path': image_path,
         'query': random.choice(queries),
         'caption': augmented_caption,
         'faiss_indices': I[0].tolist()
     }
 
-    quadruplets.append(quadruplet)
+    entries.append(entry)
 
-quadruplets_path = 'data/quadruplets/quadruplets.jsonl'
-os.makedirs(os.path.dirname(quadruplets_path), exist_ok=True)
+processed_data_path = 'data/processed/processed_data.jsonl'
+os.makedirs(os.path.dirname(processed_data_path), exist_ok=True)
 
-with open(quadruplets_path, 'w', encoding='utf-8') as h:
-    for quadruplet in quadruplets:
-        h.write(json.dumps(quadruplet) + '\n')
+with open(processed_data_path, 'w', encoding='utf-8') as h:
+    for entry in entries:
+        h.write(json.dumps(entry) + '\n')
 
-print(f"Quadruplets generated at: {quadruplets_path}")
+print(f"Processed_data generated at: {processed_data_path}")
 
-with open('data/quadruplets/quadruplets_preview.json', 'w', encoding='utf-8') as preview:
-    json.dump(quadruplets[:10], preview, indent=2)
+with open('data/processed/processed_data_preview.json', 'w', encoding='utf-8') as preview:
+    json.dump(entries[:10], preview, indent=2)
 
-print(f"Quadruplets_preview generated at: 'data/quadruplets/quadruplets_preview.json'")
+print(f"Processed_data_preview generated at: 'data/processed/processed_data_preview.json'")
