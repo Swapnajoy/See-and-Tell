@@ -5,6 +5,7 @@ import spacy
 import re
 import random
 from tqdm import tqdm
+import torch.nn.functional as F
 
 import faiss
 from sentence_transformers import SentenceTransformer
@@ -13,6 +14,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 faiss_index_path='retriever/faiss_index.bin'
 index = faiss.read_index(faiss_index_path)
+
+kb_path='data/knowledge_base/wiki_entries.jsonl'
+with open(kb_path, 'r', encoding='utf-8') as f:
+    kb = [json.loads(line) for line in f]
 
 embedder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
@@ -41,7 +46,7 @@ queries = [
 ]
 
 entries = []
-for item in tqdm(mini_coco, desc='Preparing quadruplets'):
+for item in tqdm(mini_coco, desc='Preparing processed_data'):
     image_id = item['image_id'] + '.jpg'
     caption = item['caption'].strip()
     doc = nlp(caption)
@@ -65,11 +70,17 @@ for item in tqdm(mini_coco, desc='Preparing quadruplets'):
     caption_embed = caption_embed.astype("float32")
     _, I = index.search(caption_embed, 3)
 
+    gt = [kb[idx]['content'] for idx in I[0]]
+    gt_emb = embedder.encode(gt, convert_to_tensor=True)
+    gt_emb = F.normalize(gt_emb, p=2, dim=1)
+    gt_emb = gt_emb.mean(dim=0, keepdim=True).cpu().tolist()
+
     entry = {
         'image_path': image_path,
         'query': random.choice(queries),
         'caption': augmented_caption,
-        'faiss_indices': I[0].tolist()
+        'faiss_indices': I[0].tolist(),
+        'gt_emb': gt_emb,
     }
 
     entries.append(entry)
