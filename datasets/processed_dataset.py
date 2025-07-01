@@ -1,3 +1,4 @@
+import torch
 from torch.utils.data import Dataset
 import json
 from transformers import T5Tokenizer
@@ -21,6 +22,7 @@ class ProcessedDataset(Dataset):
         caption = self.entries[idx]['caption']
         gt_idx = self.entries[idx]['faiss_indices']
         gt_emb = self.entries[idx]['gt_emb']
+        gt_emb_tensor = torch.tensor(gt_emb[0], dtype=torch.float32)
 
         encoding = self.tokenizer(
             caption,
@@ -38,7 +40,7 @@ class ProcessedDataset(Dataset):
             'target_ids': caption_emb,
             'target_mask': caption_mask,
             'gt_idx': gt_idx,
-            'gt_emb': gt_emb
+            'gt_emb': gt_emb_tensor
         }
     
     def __len__(self):

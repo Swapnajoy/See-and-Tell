@@ -3,6 +3,7 @@ import json
 import faiss
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
@@ -47,7 +48,7 @@ class Retriever(nn.Module):
         _, I = self.index.search(projected_np, self.k)
         return [[self.entries[i]['content'] for i in row] for row in I], projected
 
-    def retrieve(self, text_emb: torch.Tensor, image_emb: torch.Tensor) -> torch.Tensor:
+    def retrieve(self, text_emb, image_emb, gt_retrievals_emb = None) -> torch.Tensor:
         joint_emb = torch.cat([text_emb, image_emb], dim=-1)
         topk_contents, projected = self.get_topk_contents(joint_emb)
 
@@ -58,7 +59,12 @@ class Retriever(nn.Module):
         flat_vecs.requires_grad_()
         retrieved_vecs = flat_vecs.view(joint_emb.size(0), self.k, -1).to(self.device)
 
-        return retrieved_vecs.to(self.device), projected
+        if gt_retrievals_emb is not None:
+            retr_loss = (1 - F.cosine_similarity(projected, gt_retrievals_emb)).mean()
+            return retrieved_vecs.to(self.device), projected, retr_loss
+        
+        else:
+            return retrieved_vecs.to(self.device), projected
     
 if __name__ == '__main__':
     model = Retriever()

@@ -29,18 +29,30 @@ class VLMRAG(nn.Module):
         if self.mode == 'train':
             self.unfreeze_projection_params()
 
-    def forward(self, image_path, query, target_ids = None, target_mask = None):
+    def forward(self, image_path, query, gt_retrievals_emb = None, target_ids = None, target_mask = None):
         img_embed = self.img_enc(image_path)
         text_embed = self.text_enc(query)
-        retrieved_vecs, projected_vec = self.retriever.retrieve(text_embed, img_embed)
+
+        retr_loss = None
+        if gt_retrievals_emb is not None:
+            retrieved_vecs, projected_vec, retr_loss = self.retriever.retrieve(text_embed, img_embed, gt_retrievals_emb)
+
+        else:
+            retrieved_vecs, projected_vec = self.retriever.retrieve(text_embed, img_embed)
+
         query_vec = torch.cat([text_embed, img_embed], dim=-1)
         fused_vec = self.fusion(query_vec, retrieved_vecs, projected_vec)
+
         if target_ids is not None:
             target_ids = target_ids.to(fused_vec.device)
             target_mask = target_mask.to(fused_vec.device)
+
         output = self.decoder(fused_vec, self.mode, target_ids, target_mask)
 
-        return output
+        if retr_loss is not None:
+            return output, retr_loss
+        else:
+            return output
     
     def unfreeze_projection_params(self):
 
