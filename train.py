@@ -2,6 +2,7 @@ import os
 import yaml
 import torch
 import torch.nn as nn
+import math
 from tqdm import tqdm
 
 from datasets.processed_dataset import ProcessedDataset
@@ -28,8 +29,9 @@ def create_exp_folder(config, base_dir="train_exp"):
 learning_rate = cfg['lr']
 batch_size = cfg['batch_size']
 epochs = cfg['epochs']
-warmup_epochs = epochs//2
+warmup_epochs = cfg['warmup_epochs']
 max_retr_lambda = cfg['max_retr_lambda']
+min_retr_lambda = cfg['min_retr_lambda']
 weight_decay = cfg['weight_decay']
 log_freq = cfg['log_frequency']
 eval_freq = cfg['eval_frequency']
@@ -50,8 +52,9 @@ device = cfg['device']
 
 model = VLMRAG(mode='train').to(device)
 
-steps_per_batch = len(train_loader)
-max_steps = epochs*steps_per_batch
+num_train_batches = len(train_loader)
+num_val_batches = len(test_loader)
+max_steps = epochs*num_train_batches
 
 optimizer = torch.optim.AdamW(
     list(model.retriever.project.parameters()) + list(model.decoder.projection.parameters()),
@@ -67,7 +70,15 @@ for epoch in range(epochs):
     running_loss = 0
     decoder_loss = 0
     retriever_loss = 0
-    retr_lambda = min(max_retr_lambda, max_retr_lambda * epoch/warmup_epochs)
+
+    if epoch <= warmup_epochs:
+        retr_lambda = max_retr_lambda * epoch/warmup_epochs
+        
+    else:
+        decay_epochs = epochs - warmup_epochs
+        decay_progress = (epoch - warmup_epochs) / decay_epochs
+        cosine_decay = math.cos(0.5 * math.pi * decay_progress)
+        retr_lambda = min_retr_lambda + (max_retr_lambda - min_retr_lambda) * cosine_decay
 
     for item in tqdm(train_loader, desc=f'{epoch+1}'):
         image_path = item['image_path']
@@ -89,9 +100,9 @@ for epoch in range(epochs):
         decoder_loss += dec_loss.item()
         retriever_loss += retr_loss.item()
     
-    training_loss = running_loss/steps_per_batch
-    decoder_loss = decoder_loss/steps_per_batch
-    retriever_loss = retriever_loss/steps_per_batch
+    training_loss = running_loss/num_train_batches
+    decoder_loss = decoder_loss/num_train_batches
+    retriever_loss = retriever_loss/num_train_batches
 
     print(f"Epoch {epoch+1}: Training Loss: {training_loss:.4f}, Decoder_loss: {decoder_loss:.4f}, Retriever_loss: {retriever_loss:.4f}")
     log_line = f"Epoch {epoch+1} | Training Loss: {training_loss:.4f} | Decoder_loss: {decoder_loss:.4f} | Retriever_loss: {retriever_loss:.4f}"
@@ -119,18 +130,19 @@ for epoch in range(epochs):
                 decoder_loss += dec_loss.item()
                 retriever_loss += retr_loss.item()
 
-            validation_loss = running_loss/steps_per_batch
-            decoder_loss = decoder_loss/steps_per_batch
-            retriever_loss = retriever_loss/steps_per_batch
+            validation_loss = running_loss/num_val_batches
+            decoder_loss = decoder_loss/num_val_batches
+            retriever_loss = retriever_loss/num_val_batches
             print(f"Epoch {epoch+1}: Validation Loss: {validation_loss:.4f}, Decoder_loss: {decoder_loss:.4f}, Retriever_loss: {retriever_loss:.4f}")
         
     if (epoch+1)%log_freq == 0:
         log_line = f"Epoch {epoch+1} | Validation Loss: {validation_loss:.4f} | Decoder_loss: {decoder_loss:.4f} | Retriever_loss: {retriever_loss:.4f}"
         ckpt_path = os.path.join(exp_path, f'epoch_{epoch+1}.pt')
 
+
         with open(val_log_path, 'a', encoding='utf-8') as f:
             f.write(log_line + '\n')
-        
+       
         torch.save({
             'retriever_proj': model.retriever.project.state_dict(),
             'decoder_proj': model.decoder.projection.state_dict(),
