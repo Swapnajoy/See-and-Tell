@@ -10,6 +10,7 @@ class Decoder(nn.Module):
         self.projection = nn.Sequential(
             nn.Linear(3072, 1536),
             nn.ReLU(inplace=True),
+            nn.Dropout(0.2),
             nn.Linear(1536, 768),
         ).to(device)
         self.tokenizer = T5Tokenizer.from_pretrained(config_file)
