@@ -12,7 +12,7 @@ from tqdm import tqdm
 with open('data/captions/mini_coco.json', 'r', encoding='utf-8') as f:
     mini_coco = json.load(f)
 
-nlp = spacy.load("en_core_web_trf")
+nlp = spacy.load("en_core_web_sm")
 wiki = wikipediaapi.Wikipedia(
     language='en',
     user_agent='SeeAndTellBot/1.0 (sahaswapnajoy56@gmail.com)'
