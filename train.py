@@ -21,8 +21,9 @@ def create_exp_folder(config, base_dir="train_exp"):
     with open(os.path.join(exp_path, 'config.yaml'), 'w') as f:
         yaml.dump(config, f, default_flow_style=False, sort_keys=False)
 
-    log_path = os.path.join(exp_path, 'log.txt')
-    return exp_path, log_path
+    train_log_path = os.path.join(exp_path, 'train_log.txt')
+    val_log_path = os.path.join(exp_path, 'val_log.txt')
+    return exp_path, train_log_path, val_log_path
 
 learning_rate = cfg['lr']
 batch_size = cfg['batch_size']
@@ -59,7 +60,7 @@ optimizer = torch.optim.AdamW(
 )
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=max_steps)
 
-exp_path, log_path = create_exp_folder(config=cfg)
+exp_path, train_log_path, val_log_path = create_exp_folder(config=cfg)
 
 for epoch in range(epochs):
     model.train()
@@ -93,6 +94,10 @@ for epoch in range(epochs):
     retriever_loss = retriever_loss/steps_per_batch
 
     print(f"Epoch {epoch+1}: Training Loss: {training_loss:.4f}, Decoder_loss: {decoder_loss:.4f}, Retriever_loss: {retriever_loss:.4f}")
+    log_line = f"Epoch {epoch+1} | Training Loss: {training_loss:.4f} | Decoder_loss: {decoder_loss:.4f} | Retriever_loss: {retriever_loss:.4f}"
+
+    with open(train_log_path, 'a', encoding='utf-8') as f:
+            f.write(log_line + '\n')
 
     if (epoch+1)%eval_freq == 0:
         model.eval()
@@ -120,10 +125,10 @@ for epoch in range(epochs):
             print(f"Epoch {epoch+1}: Validation Loss: {validation_loss:.4f}, Decoder_loss: {decoder_loss:.4f}, Retriever_loss: {retriever_loss:.4f}")
         
     if (epoch+1)%log_freq == 0:
-        log_line = f"Epoch {epoch+1} | Training Loss: {training_loss:.4f} | Validation Loss: {validation_loss:.4f} | Decoder_loss: {decoder_loss:.4f} | Retriever_loss: {retriever_loss:.4f}"
+        log_line = f"Epoch {epoch+1} | Validation Loss: {validation_loss:.4f} | Decoder_loss: {decoder_loss:.4f} | Retriever_loss: {retriever_loss:.4f}"
         ckpt_path = os.path.join(exp_path, f'epoch_{epoch+1}.pt')
 
-        with open(log_path, 'a', encoding='utf-8') as f:
+        with open(val_log_path, 'a', encoding='utf-8') as f:
             f.write(log_line + '\n')
         
         torch.save({
