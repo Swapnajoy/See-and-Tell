@@ -56,11 +56,24 @@ num_train_batches = len(train_loader)
 num_val_batches = len(test_loader)
 max_steps = epochs*num_train_batches
 
+trainable_params = [
+    {"params": model.retriever.project.parameters()},
+    {"params": model.decoder.projection.parameters()},
+    {"params": [p for n, p in model.decoder.named_parameters() if p.requires_grad]}
+]
+
+trainable_params = [p for p in model.parameters() if p.requires_grad]
+print("Sanity check trainable parameters:", sum(p.numel() for p in trainable_params))
+
 optimizer = torch.optim.AdamW(
-    list(model.retriever.project.parameters()) + list(model.decoder.projection.parameters()),
+    trainable_params,
     lr=learning_rate,
     weight_decay=1e-4
 )
+
+num_params = sum(p.numel() for g in optimizer.param_groups for p in g['params'])
+print("Total trainable parameters in optimizer:", num_params)
+
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=max_steps)
 
 exp_path, train_log_path, val_log_path = create_exp_folder(config=cfg)
@@ -145,7 +158,7 @@ for epoch in range(epochs):
        
         torch.save({
             'retriever_proj': model.retriever.project.state_dict(),
-            'decoder_proj': model.decoder.projection.state_dict(),
+            'decoder': model.decoder.state_dict(),
         }, ckpt_path)
 
 print("Training Completed.")

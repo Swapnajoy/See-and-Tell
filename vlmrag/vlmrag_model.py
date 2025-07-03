@@ -28,6 +28,7 @@ class VLMRAG(nn.Module):
 
         if self.mode == 'train':
             self.unfreeze_projection_params()
+            self.unfreeze_upper_decoder_layers()
 
     def forward(self, image_path, query, gt_retrievals_emb = None, target_ids = None, target_mask = None):
         img_embed = self.img_enc(image_path)
@@ -61,3 +62,11 @@ class VLMRAG(nn.Module):
 
         for param in self.decoder.projection.parameters():
             param.requires_grad = True
+
+    def unfreeze_upper_decoder_layers(self):
+        for name, param in self.decoder.named_parameters():
+            if "block.0" in name or "block.1" in name or "block.2" in name:
+                param.requires_grad = False
+
+            else:
+                param.requires_grad = True
