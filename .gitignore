@@ -1,4 +1,5 @@
 /data/original_val2017_img_and_captions
+data/images
 /train_exp
 problems.txt
 # Byte-compiled / optimized / DLL files

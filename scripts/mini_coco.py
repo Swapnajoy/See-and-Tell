@@ -29,16 +29,13 @@ for item in annotations:
 
         entries.append(entry)
         images_seen.add(img_id)
-    
-    if len(images_seen)>=3000:
-        break
 
 os.makedirs(os.path.dirname(annotation_savepath), exist_ok=True)
 
 with open(annotation_savepath, 'w', encoding='utf-8') as g:
     json.dump(entries, g, indent=2)
 
-print(f"{annotation_savepath} created with 3000 captions")
+print(f"{annotation_savepath} created with captions")
 
 import shutil
 
