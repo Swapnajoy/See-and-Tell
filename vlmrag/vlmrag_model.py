@@ -65,7 +65,7 @@ class VLMRAG(nn.Module):
 
     def unfreeze_upper_decoder_layers(self):
         for name, param in self.decoder.named_parameters():
-            if "block.0" in name or "block.1" in name or "block.2" in name:
+            if "block.0" in name or "block.1" in name:
                 param.requires_grad = False
 
             else:
