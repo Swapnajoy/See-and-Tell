@@ -16,7 +16,7 @@ ckpt_path = cfg['ckpt_path']
 model = VLMRAG(mode='inference')
 state_dict = torch.load(cfg['ckpt_path'], map_location=device)
 model.retriever.project.load_state_dict(state_dict['retriever_proj'])
-model.decoder.projection.load_state_dict(state_dict['decoder_proj'])
+model.decoder.load_state_dict(state_dict['decoder'])
 
 model.to(device)
 
