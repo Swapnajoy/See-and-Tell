@@ -85,6 +85,8 @@ for item in tqdm(mini_coco, desc='Preparing processed_data'):
 
     entries.append(entry)
 
+print(f'Number of entries: {len(entries)}')
+
 processed_data_path = 'data/processed/processed_data.jsonl'
 os.makedirs(os.path.dirname(processed_data_path), exist_ok=True)
 
