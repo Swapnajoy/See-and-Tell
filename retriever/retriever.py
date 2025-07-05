@@ -16,7 +16,8 @@ class Retriever(nn.Module):
             kb_path='data/knowledge_base/wiki_entries.jsonl',
             projection_ckpt_path='retriever/projection.pt',
             device='cuda' if torch.cuda.is_available() else 'cpu',
-            distractor_prob=0
+            distractor_prob=0,
+            retr_dropout_prob=0
             ):
         super().__init__()
         self.index = faiss.read_index(faiss_index_path)
@@ -40,6 +41,7 @@ class Retriever(nn.Module):
             self.entries = [json.loads(line) for line in f]
 
         self.distractor_prob = distractor_prob
+        self.retr_dropout_prob = retr_dropout_prob
 
     def save(self):
         torch.save(self.project.state_dict(), self.ckpt_path)
@@ -68,6 +70,9 @@ class Retriever(nn.Module):
         flat_vecs = self.embedder.encode(flat_contents, convert_to_tensor=True)
         flat_vecs.requires_grad_()
         retrieved_vecs = flat_vecs.view(joint_emb.size(0), self.k, -1).to(self.device)
+
+        if random.random() < self.retr_dropout_prob:
+            retrieved_vecs = torch.zeros_like(retrieved_vecs)
 
         if gt_retrievals_emb is not None:
             retr_loss = (1 - F.cosine_similarity(projected, gt_retrievals_emb)).mean()

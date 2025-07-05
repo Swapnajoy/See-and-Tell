@@ -21,10 +21,10 @@ class VLMRAG(nn.Module):
         self.text_enc = TextEncoder()
 
         if mode=='train':
-            self.retriever = Retriever(distractor_prob=0.3)
+            self.retriever = Retriever(distractor_prob=0.3, retr_dropout_prob=0.2)
         else:
             self.retriever = Retriever()
-            
+
         self.fusion = FusionModule()
         self.decoder = Decoder()
 
