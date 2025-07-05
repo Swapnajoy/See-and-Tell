@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+import random
 from sentence_transformers import SentenceTransformer
 
 class Retriever(nn.Module):
@@ -14,7 +15,8 @@ class Retriever(nn.Module):
             k=3,
             kb_path='data/knowledge_base/wiki_entries.jsonl',
             projection_ckpt_path='retriever/projection.pt',
-            device='cuda' if torch.cuda.is_available() else 'cpu'
+            device='cuda' if torch.cuda.is_available() else 'cpu',
+            distractor_prob=0
             ):
         super().__init__()
         self.index = faiss.read_index(faiss_index_path)
@@ -37,6 +39,8 @@ class Retriever(nn.Module):
         with open(kb_path, 'r', encoding='utf-8') as f:
             self.entries = [json.loads(line) for line in f]
 
+        self.distractor_prob = distractor_prob
+
     def save(self):
         torch.save(self.project.state_dict(), self.ckpt_path)
     
@@ -46,6 +50,12 @@ class Retriever(nn.Module):
         projected_np = projected_normed.detach().cpu().numpy().astype('float32')
 
         _, I = self.index.search(projected_np, self.k)
+
+        for row_idx in range(I.shape[0]):
+            for col_idx in range(I.shape[1]):
+                if random.random() < self.distractor_prob:
+                    I[row_idx, col_idx] = random.randint(0, len(self.entries)-1)
+
         return [[self.entries[i]['content'] for i in row] for row in I], projected
 
     def retrieve(self, text_emb, image_emb, gt_retrievals_emb = None) -> torch.Tensor:
