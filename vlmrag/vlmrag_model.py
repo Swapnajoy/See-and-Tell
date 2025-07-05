@@ -19,7 +19,12 @@ class VLMRAG(nn.Module):
         assert self.mode in {'train', 'inference'}, f"Invalid mode: {self.mode}"
         self.img_enc = ImageEncoder()
         self.text_enc = TextEncoder()
-        self.retriever = Retriever()
+
+        if mode=='train':
+            self.retriever = Retriever(distractor_prob=0.3)
+        else:
+            self.retriever = Retriever()
+            
         self.fusion = FusionModule()
         self.decoder = Decoder()
 
