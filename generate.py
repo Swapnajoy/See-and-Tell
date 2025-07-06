@@ -7,7 +7,7 @@ from utils.config import load_config
 
 cfg = load_config()
 
-image_path = ['data/original_val2017_img_and_captions/val2017/000000314709.jpg']
+image_path = ['data/images/000000017031.jpg']
 text_query = ['Describe the image.']
 
 device = cfg['device']

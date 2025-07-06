@@ -128,8 +128,12 @@ for epoch in range(epochs):
     decoder_loss = decoder_loss/num_train_batches
     retriever_loss = retriever_loss/num_train_batches
 
+    alpha = model.fusion.alpha
+    beta = model.fusion.beta
+    gamma = model.fusion.gamma
+
     print(f"Epoch {epoch+1}: Training Loss: {training_loss:.4f}, Decoder_loss: {decoder_loss:.4f}, Retriever_loss: {retriever_loss:.4f}")
-    log_line = f"Epoch {epoch+1} | Training Loss: {training_loss:.4f} | Decoder_loss: {decoder_loss:.4f} | Retriever_loss: {retriever_loss:.4f}"
+    log_line = f"Epoch {epoch+1} | Training Loss: {training_loss:.4f} | Decoder_loss: {decoder_loss:.4f} | Retriever_loss: {retriever_loss:.4f} | Alpha: {alpha:.4f} | Beta: {beta:.4f} | Gamma: {gamma:.4f}"
 
     with open(train_log_path, 'a', encoding='utf-8') as f:
             f.write(log_line + '\n')
