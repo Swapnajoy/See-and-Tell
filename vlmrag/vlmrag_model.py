@@ -34,6 +34,7 @@ class VLMRAG(nn.Module):
         if self.mode == 'train':
             self.unfreeze_projection_params()
             self.unfreeze_upper_decoder_layers()
+            self.unfreeze_learnable_fusion()
 
     def forward(self, image_path, query, gt_retrievals_emb = None, target_ids = None, target_mask = None):
         img_embed = self.img_enc(image_path)
@@ -66,6 +67,10 @@ class VLMRAG(nn.Module):
             param.requires_grad = True
 
         for param in self.decoder.projection.parameters():
+            param.requires_grad = True
+
+    def unfreeze_learnable_fusion(self):
+        for param in self.fusion.parameters():
             param.requires_grad = True
 
     def unfreeze_upper_decoder_layers(self):

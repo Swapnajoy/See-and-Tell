@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
 
-class FusionModule:
+class FusionModule(nn.Module):
     def __init__(self, query_dim=1536, ret_text_dim=384, k=3):
+        super().__init__()
         self.query_dim = query_dim
         self.ret_text_dim = ret_text_dim
         self.k = k
