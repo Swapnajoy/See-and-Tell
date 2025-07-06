@@ -35,25 +35,28 @@ min_retr_lambda = cfg['min_retr_lambda']
 weight_decay = cfg['weight_decay']
 log_freq = cfg['log_frequency']
 eval_freq = cfg['eval_frequency']
-train_test_split = cfg['train_test_split']
+train_split = cfg['train_split']
+val_split = cfg['val_split']
+test_split = 1 - (train_split + val_split)
 
 dataset = ProcessedDataset()
 
-split_idx = int(train_test_split*len(dataset))
+total_len = len(dataset)
+train_size = int(train_split * total_len)
+val_size = int(val_split * total_len)
+test_size = total_len - train_size - val_size
 
-train_size = split_idx
-test_size = len(dataset) - train_size
-train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 
 device = cfg['device']
 
 model = VLMRAG(mode='train').to(device)
 
 num_train_batches = len(train_loader)
-num_val_batches = len(test_loader)
+num_val_batches = len(val_loader)
 max_steps = epochs*num_train_batches
 
 trainable_params = [
@@ -68,7 +71,7 @@ print("Sanity check trainable parameters:", sum(p.numel() for p in trainable_par
 optimizer = torch.optim.AdamW(
     trainable_params,
     lr=learning_rate,
-    weight_decay=1e-4
+    weight_decay=weight_decay
 )
 
 num_params = sum(p.numel() for g in optimizer.param_groups for p in g['params'])
@@ -77,6 +80,14 @@ print("Total trainable parameters in optimizer:", num_params)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=max_steps)
 
 exp_path, train_log_path, val_log_path = create_exp_folder(config=cfg)
+
+test_file_path = os.path.join(exp_path, 'test_images.txt')
+with open(test_file_path, 'w') as f:
+    for idx in test_dataset.indices:
+        image_path = dataset[idx]['image_path']
+        f.write(image_path + '\n')
+
+print(f"Test image paths saved to {test_file_path}")
 
 for epoch in range(epochs):
     model.train()
@@ -130,7 +141,7 @@ for epoch in range(epochs):
         retriever_loss = 0
         with torch.no_grad():
             running_loss = 0
-            for item in test_loader:
+            for item in val_loader:
                 image_path = item['image_path']
                 query = item['query']
                 target_ids = item['target_ids'].to(device)
