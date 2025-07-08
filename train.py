@@ -66,17 +66,11 @@ trainable_params = [
     {"params": [p for n, p in model.decoder.named_parameters() if p.requires_grad]}
 ]
 
-trainable_params = [p for p in model.parameters() if p.requires_grad]
-print("Sanity check trainable parameters:", sum(p.numel() for p in trainable_params))
-
 optimizer = torch.optim.AdamW(
     trainable_params,
     lr=learning_rate,
     weight_decay=weight_decay
 )
-
-num_params = sum(p.numel() for g in optimizer.param_groups for p in g['params'])
-print("Total trainable parameters in optimizer:", num_params)
 
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=max_steps)
 

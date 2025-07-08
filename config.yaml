@@ -1,7 +1,7 @@
 # === Training Hyperparameters ===
 batch_size: 16
 lr: 0.0002
-epochs: 50
+epochs: 30
 warmup_epochs: 5
 max_retr_lambda: 0.5
 min_retr_lambda: 0.1
