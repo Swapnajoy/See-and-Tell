@@ -7,7 +7,7 @@ This project explores **retrieval-augmented generation (RAG)**, specifically for
 The **T5** model is used as the **text encoder**, which processes the query text and generates the final caption. The **ViT (Vision Transformer)** is used as the **image encoder**, which extracts meaningful features from the image. These embeddings from both the text and image are then fused with additional information from a retrieval system, making the model more contextually aware.
 
 ### 🎯 Purpose
-The goal of this project was to enhance traditional image captioning by integrating retrieval-augmented generation. By using external knowledge through retrieval, I aimed to **generate more relevant and context-aware captions** for images, especially in cases where captions require knowledge beyond what is directly visible in the image.
+The goal of this project was to enhance traditional image captioning by integrating retrieval-augmented generation. By using external knowledge through retrieval, it was aimed to **generate more descriptive captions** for the image especially the description of the objects in the image.
 
 Through this project, I learned several key concepts:
 - **Text-to-text transformers (T5)** are extremely effective at generating coherent text from a variety of inputs.
