@@ -63,7 +63,7 @@ trainable_params = [
     {"params": model.retriever.project.parameters()},
     {"params": model.fusion.parameters()},
     {"params": model.decoder.projection.parameters()},
-    {"params": [p for n, p in model.decoder.named_parameters() if p.requires_grad]}
+    {"params": [p for n, p in model.decoder.named_parameters() if p.requires_grad and "projection" not in n]}
 ]
 
 optimizer = torch.optim.AdamW(
