@@ -18,4 +18,4 @@ device: cuda
 random_seed: 42
 
 # === Generate ===
-ckpt_path: 'train_exp/run_epoch50_lr0.0002_bs16_20250706-074952/epoch_15.pt'
+ckpt_path: 'train_exp/run_epoch30_lr0.0002_bs16_20250708-135228/epoch_11.pt'
