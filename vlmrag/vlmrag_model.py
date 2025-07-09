@@ -53,8 +53,10 @@ class VLMRAG(nn.Module):
         if target_ids is not None:
             target_ids = target_ids.to(fused_vec.device)
             target_mask = target_mask.to(fused_vec.device)
-
-        output = self.decoder(fused_vec, self.mode, target_ids, target_mask)
+            output = self.decoder(fused_vec, self.mode, target_ids, target_mask)
+        
+        else:
+            output = self.decoder(fused_vec)
 
         if retr_loss is not None:
             return output, retr_loss
