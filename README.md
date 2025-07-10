@@ -51,3 +51,24 @@ In this section, we’ll describe the key components of the **VLMRAG** model. Th
 ### **5. Decoder**
 - The **Decoder** is based on **T5** and is responsible for generating the final output. It processes the fused vector and outputs either a **textual description** (in inference mode) or **loss** (in training mode).
 - The decoder is fine-tuned to handle the generated representations and produce coherent text outputs based on the multimodal input.
+
+
+## 🏋️‍♂️ Training
+The VLMRAG model is trained using a multi-task loss consisting of:
+
+- Decoder Loss: Cross-entropy loss between generated text and ground truth captions.
+
+- Retriever Loss: Cosine similarity between the retrieved knowledge embeddings and ground truth retrievals.
+
+### Key Components:
+- Optimizer: AdamW is used to optimize the model with a cosine annealing learning rate scheduler.
+
+- Loss: Total loss = `decoder_loss + retr_lambda * retriever_loss`, where `retr_lambda` adjusts the weight of the retriever loss.
+
+Training checkpoints are saved periodically, and training logs are written for later analysis.
+
+Run the training script by executing the following command:
+```
+python train.py
+```
+The training parameters are stored in a configuration file (`config.yaml`)
