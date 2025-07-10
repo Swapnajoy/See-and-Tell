@@ -17,4 +17,17 @@ Through this project, I learned several key concepts:
 
 This project served as both a practical exercise in working with **transformer-based models** and a deep dive into the **retrieval-augmented generation** paradigm.
 
+## 🌍 Data Creation
+
+The project relies heavily on the **COCO 2017 Validation Split** dataset and external knowledge from **Wikipedia**. Here's how the data was processed and used:
+
+- **COCO Dataset with Annotations:** Utilized images and their corresponding captions from the **COCO dataset** to train and evaluate our model. The dataset includes detailed captions describing the objects and scenes in the images.
+- **Noun Extraction:** Performed **noun extraction** using **SpaCy** to identify the important objects and concepts in the captions.
+- **Wiki Search for Knowledge Base:** For each noun identified in the captions, searched for relevant information on **Wikipedia** to create a **knowledge base**. This additional context helps enhance the model's understanding of objects in the images.
+- **Sentence Embedding:** Used **SentenceTransformer** to encode the text from the knowledge base into embeddings. These embeddings are used to find similar content during training.
+- **Faiss Indexing:** The embeddings of the knowledge base content were indexed using **Faiss** to enable fast and efficient retrieval during both training and inference.
+
+These steps resulted in a rich dataset with textual information related to the images, improving the model's ability to understand and generate detailed descriptions.
+
+
 
