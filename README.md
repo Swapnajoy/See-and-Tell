@@ -29,5 +29,25 @@ The project relies heavily on the **COCO 2017 Validation Split** dataset and ext
 
 These steps resulted in a rich dataset with textual information related to the images, improving the model's ability to understand and generate detailed descriptions.
 
+## 🚀 Model Architecture
 
+In this section, we’ll describe the key components of the **VLMRAG** model. The architecture is designed to handle both **image** and **text** inputs, retrieve relevant content from an external knowledge base, and fuse all this information for text generation or loss calculation. The following components are essential to the model's functionality:
 
+### **1. Image Encoder**
+- The **Image Encoder** is based on the **Vision Transformer (ViT)**, which processes the input image and generates a feature embedding that represents the content of the image.
+- The encoder captures spatial and semantic information from the image, which will later be fused with the query text and retrieved knowledge.
+
+### **2. Text Encoder**
+- The **Text Encoder** uses **T5**, a pre-trained transformer model, to process the input query text. It transforms the text into a feature vector that captures the semantic meaning of the query.
+
+### **3. Retriever**
+- The **Retriever** is responsible for fetching additional relevant information from the **knowledge base**. It concatenates the **encoded query text** and **image features** and projects them to the required dimension through an NN Layer to find the most relevant content stored in the knowledge base.
+- The retriever uses **Faiss** for efficient similarity search of embeddings in the knowledge base. It retrieves the top-k most relevant items based on the query and image embeddings.
+
+### **4. Fusion Layer**
+- The **Fusion Layer** combines the encoded text, image features, retrieved knowledge embeddings and the projected vector required for the retrieval. This fusion process ensures that the model integrates information from all modalities (text, image, and knowledge) to create a comprehensive representation of the input data.
+- The fusion is learnable with trainable parameters, which allow the model to adjust the relative importance of each modality (text, image, and retrieved knowledge).
+
+### **5. Decoder**
+- The **Decoder** is based on **T5** and is responsible for generating the final output. It processes the fused vector and outputs either a **textual description** (in inference mode) or **loss** (in training mode).
+- The decoder is fine-tuned to handle the generated representations and produce coherent text outputs based on the multimodal input.
