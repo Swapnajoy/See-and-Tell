@@ -72,3 +72,27 @@ Run the training script by executing the following command:
 python train.py
 ```
 The training parameters are stored in a configuration file (`config.yaml`)
+
+
+## 📈 Evaluation
+
+After training, evaluation is performed primarily by monitoring the **validation loss**, which combines decoder and retriever objectives.  
+
+Validation logs are automatically saved during training in the experiment directory and can be inspected to understand model convergence and overfitting.
+
+To visualize training and validation losses, as well as the evolution of the **learnable fusion parameters** (*alpha*, *beta*, *gamma*), the `analysis.ipynb` notebook can be referred to. 
+
+
+## 🧠 Inference
+
+Captions can be generated for custom images and queries using the `generate.py` script.
+
+The script can be executed with the following command:
+
+```
+python generate.py
+```
+
+Ensure that the `ckpt_path` in the `config.yaml` is updated to point to the checkpoint that is to be used for inference.
+
+The generated caption will be printed in the console. For visualization of the input image along with the output text, and for more detailed analysis of the generated captions, the `analysis.ipynb` notebook can be referred to.
