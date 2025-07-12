@@ -52,9 +52,9 @@ The architecture is designed to handle both **image** and **text** inputs, retri
 - The **Decoder** is based on **T5** and is responsible for generating the final output. It processes the fused vector and outputs either a **textual description** (in inference mode) or **loss** (in training mode).
 - The decoder is fine-tuned to handle the generated representations and produce coherent text outputs based on the multimodal input.
 
-<div style="text-align: center;">
+<p align="center">
   <img src="assets/model_architecture.png" alt="Model Architecture" style="width:80%;"/>
-</div>
+</p>
 
 
 ## 🏋️‍♂️ Training
