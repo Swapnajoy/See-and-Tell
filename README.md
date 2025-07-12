@@ -97,3 +97,50 @@ python generate.py
 Ensure that the `ckpt_path` in the `config.yaml` is updated to point to the checkpoint that is to be used for inference.
 
 The generated caption will be printed in the console. For visualization of the input image along with the output text, and for more detailed analysis of the generated captions, the `analysis.ipynb` notebook can be referred to.
+
+## ⚙️ Installation & Setup
+
+To set up the environment and install all required dependencies, follow these steps:
+
+### Step 1: Create a Virtual Environment
+
+It's recommended to create a virtual environment using **Conda** with Python 3.10:
+
+```
+conda create -n vlmrag python=3.10
+conda activate vlmrag
+```
+
+### Step 2: Install Dependencies
+
+To install all necessary Python dependencies, run:
+
+```
+pip install -r requirements.txt
+```
+
+### Step 3: Install PyTorch with CUDA Support
+
+Please refer to the official [PyTorch installation guide](https://pytorch.org/get-started/locally/) to install PyTorch with CUDA support that matches your system's configuration.
+
+### Step 4: Clone the Repository
+
+```
+git clone https://github.com/Swapnajoy/See-and-Tell.git
+```
+
+### Step 5: Activate the Virtual Environment
+
+Make sure the virtual environment is activated:
+
+```
+conda activate vlmrag
+```
+
+Proceed to use or develop the project within this environment.
+
+## 🚀 Ready to Explore?
+
+Now that you're set up, it's time to dive into the world of **retrieval-augmented generation** and explore the exciting potential of Vision-Language Models! Whether you're here to generate better captions or experiment with multimodal tasks, this project offers a lot of room for creativity.
+
+Happy experimenting! 🚀
