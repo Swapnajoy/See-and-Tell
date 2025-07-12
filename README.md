@@ -143,4 +143,6 @@ Proceed to use or develop the project within this environment.
 
 Now that you're set up, it's time to dive into the world of **retrieval-augmented generation** and explore the exciting potential of Vision-Language Models! Whether you're here to generate better captions or experiment with multimodal tasks, this project offers a lot of room for creativity.
 
+While the model performs well in identifying key objects and generating relevant descriptions, it is not perfect. The generated captions are typically accurate for the main objects in the image but may not always capture finer details or produce highly coherent text in complex scenarios. The model's performance improves as it encounters more diverse data, and further fine-tuning may enhance its capabilities.
+
 Happy experimenting! 🚀
