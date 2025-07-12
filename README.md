@@ -82,6 +82,7 @@ Validation logs are automatically saved during training in the experiment direct
 
 To visualize training and validation losses, as well as the evolution of the **learnable fusion parameters** (*alpha*, *beta*, *gamma*), the `analysis.ipynb` notebook can be referred to. 
 
+Several challenges were encountered during training, and the steps taken to overcome them are detailed in the [challenges_and_solutions.md](docs/challenges_and_solutions.md) file.
 
 ## 🧠 Inference
 
